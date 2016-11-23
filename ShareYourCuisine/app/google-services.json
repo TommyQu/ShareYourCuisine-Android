@@ -1,0 +1,38 @@
+{
+  "project_info": {
+    "project_number": "590997361663",
+    "firebase_url": "https://shareyourcuisine.firebaseio.com",
+    "project_id": "shareyourcuisine",
+    "storage_bucket": "shareyourcuisine.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:590997361663:android:99a332e0b13370d1",
+        "android_client_info": {
+          "package_name": "com.toe.shareyourcuisine"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "590997361663-nanajqrppv8vadql154bgs9o2r2mr6tm.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [{"current_key":"AIzaSyAZ-fuy5tFZLNWT80vLdE1RMs2lHgH3Udg"}],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
