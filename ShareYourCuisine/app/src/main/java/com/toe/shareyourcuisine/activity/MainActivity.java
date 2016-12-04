@@ -15,11 +15,14 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.toe.shareyourcuisine.R;
+import com.toe.shareyourcuisine.fragment.HomeFragment;
+import com.toe.shareyourcuisine.fragment.MenuFragment;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -36,6 +39,7 @@ public class MainActivity extends AppCompatActivity
         setContentView(R.layout.activity_main);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
         mAuth = FirebaseAuth.getInstance();
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
@@ -45,10 +49,14 @@ public class MainActivity extends AppCompatActivity
                     // User is signed in
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(false);
                     mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(true);
+                    mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(true);
+                    TextView emailTv = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.email_tv);
+                    emailTv.setText(user.getEmail());
                 } else {
                     // User is signed out
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(true);
                     mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(false);
+                    mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(false);
                     if(mAuthAction.equalsIgnoreCase("sign out"))
                         Toast.makeText(MainActivity.this, "Sign out successfully!",
                                 Toast.LENGTH_SHORT).show();
@@ -56,15 +64,6 @@ public class MainActivity extends AppCompatActivity
                 // ...
             }
         };
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Snackbar.make(view, "Replace with your own action", Snackbar.LENGTH_LONG)
-                        .setAction("Action", null).show();
-            }
-        });
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -74,6 +73,7 @@ public class MainActivity extends AppCompatActivity
 
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
+        mNavigationView.getMenu().getItem(0).setChecked(true);
     }
 
     @Override
@@ -130,21 +130,25 @@ public class MainActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_home) {
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
+            setTitle(item.getTitle());
         } else if (id == R.id.nav_menus) {
-
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, new MenuFragment()).commit();
+            setTitle(item.getTitle());
         } else if (id == R.id.nav_posts) {
-
+            setTitle(item.getTitle());
         } else if (id == R.id.nav_events) {
-
+            setTitle(item.getTitle());
         } else if (id == R.id.nav_sign_in) {
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);
             startActivity(intent);
         } else if (id == R.id.nav_sign_out) {
             mAuth.signOut();
             mAuthAction = "sign out";
+        } else if (id == R.id.nav_profile) {
+            Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
         }
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;

@@ -27,6 +27,10 @@
                 android:icon="@drawable/ic_action_import"
                 android:title="Sign In"/>
             <item
+                android:id="@+id/nav_profile"
+                android:icon="@drawable/ic_action_user"
+                android:title="Profile"/>
+            <item
                 android:id="@+id/nav_sign_out"
                 android:icon="@drawable/ic_action_export"
                 android:title="Sign Out"/>
