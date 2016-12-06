@@ -23,6 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.fragment.HomeFragment;
 import com.toe.shareyourcuisine.fragment.MenuFragment;
+import com.toe.shareyourcuisine.model.UserProfile;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -57,6 +58,11 @@ public class MainActivity extends AppCompatActivity
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(true);
                     mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(false);
                     mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(false);
+                    TextView emailTv = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.email_tv);
+                    emailTv.setText("");
+                    UserProfile userProfile = UserProfile.findById(UserProfile.class, 1);
+                    if(userProfile != null)
+                        userProfile.delete();
                     if(mAuthAction.equalsIgnoreCase("sign out"))
                         Toast.makeText(MainActivity.this, "Sign out successfully!",
                                 Toast.LENGTH_SHORT).show();
