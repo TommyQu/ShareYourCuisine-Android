@@ -10,34 +10,50 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.ConfirmPassword;
+import com.mobsandgeeks.saripaar.annotation.Email;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
+import com.mobsandgeeks.saripaar.annotation.Password;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.rengwuxian.materialedittext.validation.METValidator;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.service.UserService;
 
+import java.util.List;
+
 /**
  * Created by HQu on 11/28/2016.
  */
 
-public class RegisterActivity extends AppCompatActivity implements UserService.RegisterListener{
+public class RegisterActivity extends AppCompatActivity implements UserService.RegisterListener, Validator.ValidationListener{
 
     private static final String TAG = "ToeRegisterActivity:";
+    @Email
     private MaterialEditText mEmailET;
+    @Password(min = 8, scheme = Password.Scheme.ANY)
     private MaterialEditText mPwdET;
+    @ConfirmPassword
     private MaterialEditText mRePwdET;
     private Button mSubmitBtn;
+    private Validator mValidator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_register);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        mValidator = new Validator(RegisterActivity.this);
+        mValidator.setValidationListener(RegisterActivity.this);
+
         mEmailET = (MaterialEditText)findViewById(R.id.email_et);
         mPwdET = (MaterialEditText)findViewById(R.id.pwd_et);
         mRePwdET = (MaterialEditText)findViewById(R.id.re_pwd_et);
@@ -46,12 +62,9 @@ public class RegisterActivity extends AppCompatActivity implements UserService.R
         mSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                UserService userService = new UserService(RegisterActivity.this);
-                userService.setRegisterListener((UserService.RegisterListener) RegisterActivity.this);
-                userService.register(mEmailET.getText().toString(), mPwdET.getText().toString());
+                mValidator.validate();
             }
         });
-        validatePwd();
     }
 
     @Override
@@ -64,46 +77,6 @@ public class RegisterActivity extends AppCompatActivity implements UserService.R
         return super.onOptionsItemSelected(item);
     }
 
-    public void validatePwd() {
-        mPwdET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(s.toString().equalsIgnoreCase(mRePwdET.getText().toString()))
-                    mRePwdET.setError(null);
-                else
-                    mRePwdET.setError("Password does not match!");
-            }
-        });
-        mRePwdET.addTextChangedListener(new TextWatcher() {
-            @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {
-
-            }
-
-            @Override
-            public void afterTextChanged(Editable s) {
-                if(s.toString().equalsIgnoreCase(mPwdET.getText().toString()))
-                    mRePwdET.setError(null);
-                else
-                    mRePwdET.setError("Password does not match!");
-            }
-        });
-    }
 
     @Override
     public void registerSucceed() {
@@ -114,5 +87,26 @@ public class RegisterActivity extends AppCompatActivity implements UserService.R
     @Override
     public void registerFail(String errorMsg) {
         Toast.makeText(RegisterActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        UserService userService = new UserService(RegisterActivity.this);
+        userService.setRegisterListener((UserService.RegisterListener) RegisterActivity.this);
+        userService.register(mEmailET.getText().toString(), mPwdET.getText().toString());
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+            // Display error messages ;)
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }

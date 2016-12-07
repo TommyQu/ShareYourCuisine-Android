@@ -35,6 +35,7 @@ dependencies {
     compile 'com.squareup.picasso:picasso:2.5.2'
     compile 'com.afollestad.material-dialogs:core:0.9.1.0'
     compile 'id.zelory:compressor:1.0.4'
+    compile 'com.mobsandgeeks:android-saripaar:2.0.3'
     compile('com.sangcomz:FishBun:0.6.1@aar') {
         transitive = true
     }

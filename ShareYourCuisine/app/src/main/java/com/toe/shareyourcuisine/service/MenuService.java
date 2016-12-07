@@ -1,6 +1,7 @@
 package com.toe.shareyourcuisine.service;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.graphics.LightingColorFilter;
 import android.net.Uri;
 import android.support.annotation.NonNull;
@@ -64,7 +65,8 @@ public class MenuService {
     }
 
     public void uploadDisplayImg(String displayImgUrl, String uid) {
-        Uri file = Uri.fromFile(new File(displayImgUrl));
+        File compressedImg = new Compressor.Builder(mContext).setCompressFormat(Bitmap.CompressFormat.PNG).build().compressToFile(new File(displayImgUrl));
+        Uri file = Uri.fromFile(compressedImg);
         mImgStorageRef = mStorageRef.child("images/" + uid + "/" + file.getLastPathSegment());
         UploadTask uploadTask = mImgStorageRef.putFile(file);
         uploadTask.addOnFailureListener(new OnFailureListener() {
@@ -86,7 +88,8 @@ public class MenuService {
         final int imgCount = contentImgUrls.size();
         for(int i = 0; i < contentImgUrls.size(); i++) {
             final int finalIndex = i;
-            Uri file = Uri.fromFile(new File(contentImgUrls.get(i)));
+            File compressedImg = new Compressor.Builder(mContext).setCompressFormat(Bitmap.CompressFormat.PNG).build().compressToFile(new File(contentImgUrls.get(i)));
+            Uri file = Uri.fromFile(compressedImg);
             mImgStorageRef = mStorageRef.child("images/" + uid + "/" + file.getLastPathSegment());
             UploadTask uploadTask = mImgStorageRef.putFile(file);
             uploadTask.addOnFailureListener(new OnFailureListener() {

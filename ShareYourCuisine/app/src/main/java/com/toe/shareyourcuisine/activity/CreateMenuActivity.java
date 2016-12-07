@@ -14,6 +14,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -21,6 +22,11 @@ import android.widget.Toast;
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.mobsandgeeks.saripaar.ValidationError;
+import com.mobsandgeeks.saripaar.Validator;
+import com.mobsandgeeks.saripaar.annotation.Email;
+import com.mobsandgeeks.saripaar.annotation.NotEmpty;
+import com.mobsandgeeks.saripaar.annotation.Select;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.sangcomz.fishbun.FishBun;
 import com.sangcomz.fishbun.define.Define;
@@ -34,17 +40,22 @@ import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 
 /**
  * Created by HQu on 12/4/2016.
  */
 
-public class CreateMenuActivity extends AppCompatActivity implements MenuService.CreateNewMenuListener{
+public class CreateMenuActivity extends AppCompatActivity implements MenuService.CreateNewMenuListener, Validator.ValidationListener{
 
     private static final String TAG = "ToeCMenuActivity:";
+    @NotEmpty
+    @Email
     private MaterialEditText mTitleET;
+    @Select
     private MaterialBetterSpinner mCookingTimeSpin;
+    @NotEmpty
     private MaterialEditText mContentET;
     private Button mSelectImgBtn;
     private LinearLayout mContentImgLayout;
@@ -56,6 +67,7 @@ public class CreateMenuActivity extends AppCompatActivity implements MenuService
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mUser;
     private MaterialDialog mMaterialDialog;
+    private Validator mValidator;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -69,6 +81,8 @@ public class CreateMenuActivity extends AppCompatActivity implements MenuService
                 mUser = firebaseAuth.getCurrentUser();
             }
         };
+        mValidator = new Validator(CreateMenuActivity.this);
+        mValidator.setValidationListener(CreateMenuActivity.this);
 
         mTitleET = (MaterialEditText)findViewById(R.id.title_et);
         mCookingTimeSpin = (MaterialBetterSpinner)findViewById(R.id.cooking_time_spin);
@@ -100,23 +114,7 @@ public class CreateMenuActivity extends AppCompatActivity implements MenuService
         mSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMaterialDialog = new MaterialDialog.Builder(CreateMenuActivity.this)
-                        .title("Creating menu")
-                        .content("Please wait")
-                        .progress(true, 0)
-                        .show();
-                Menu menu = new Menu();
-                menu.setTitle(mTitleET.getText().toString());
-                menu.setCookingTime(mCookingTimeSpin.getText().toString());
-                menu.setDisplayImgUrl(mContentImgUrls.get(0));
-                menu.setContent(mContentET.getText().toString());
-                menu.setContentImgUrls(mContentImgUrls);
-                menu.setCreatedBy(mUser.getUid());
-                menu.setCreatedAt(SYCUtils.getCurrentEST());
-                menu.setLastCommentedAt(SYCUtils.getCurrentEST());
-                MenuService menuService = new MenuService();
-                menuService.createMenu(menu, mContentImgUrls);
-                menuService.setCreateNewMenuListener(CreateMenuActivity.this);
+                mValidator.validate();
             }
         });
     }
@@ -183,5 +181,40 @@ public class CreateMenuActivity extends AppCompatActivity implements MenuService
     public void createNewMenuFail(String errorMsg) {
         mMaterialDialog.dismiss();
         Toast.makeText(CreateMenuActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onValidationSucceeded() {
+        mMaterialDialog = new MaterialDialog.Builder(CreateMenuActivity.this)
+                .title("Creating menu")
+                .content("Please wait")
+                .progress(true, 0)
+                .show();
+        Menu menu = new Menu();
+        menu.setTitle(mTitleET.getText().toString());
+        menu.setCookingTime(mCookingTimeSpin.getText().toString());
+        menu.setDisplayImgUrl(mContentImgUrls.get(0));
+        menu.setContent(mContentET.getText().toString());
+        menu.setContentImgUrls(mContentImgUrls);
+        menu.setCreatedBy(mUser.getUid());
+        menu.setCreatedAt(SYCUtils.getCurrentEST());
+        menu.setLastCommentedAt(SYCUtils.getCurrentEST());
+        MenuService menuService = new MenuService(CreateMenuActivity.this);
+        menuService.createMenu(menu, mContentImgUrls);
+        menuService.setCreateNewMenuListener(CreateMenuActivity.this);
+    }
+
+    @Override
+    public void onValidationFailed(List<ValidationError> errors) {
+        for (ValidationError error : errors) {
+            View view = error.getView();
+            String message = error.getCollatedErrorMessage(this);
+            // Display error messages ;)
+            if (view instanceof EditText) {
+                ((EditText) view).setError(message);
+            } else {
+                Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+            }
+        }
     }
 }
