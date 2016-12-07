@@ -1,5 +1,9 @@
 package com.toe.shareyourcuisine.utils;
 
+import android.content.Context;
+
+import com.afollestad.materialdialogs.MaterialDialog;
+
 import java.util.Calendar;
 import java.util.TimeZone;
 
@@ -14,4 +18,6 @@ public class SYCUtils {
         Calendar calendar = Calendar.getInstance(timeZone);
         return calendar.getTimeInMillis();
     }
+
+
 }

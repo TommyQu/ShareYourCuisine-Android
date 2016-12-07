@@ -33,6 +33,8 @@ dependencies {
     compile 'com.rengwuxian.materialedittext:library:2.1.4'
     compile 'com.weiwangcn.betterspinner:library-material:1.1.0'
     compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.afollestad.material-dialogs:core:0.9.1.0'
+    compile 'id.zelory:compressor:1.0.4'
     compile('com.sangcomz:FishBun:0.6.1@aar') {
         transitive = true
     }

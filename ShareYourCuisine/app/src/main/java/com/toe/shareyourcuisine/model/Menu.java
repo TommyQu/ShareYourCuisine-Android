@@ -22,7 +22,7 @@ public class Menu {
     private Long lastCommentedAt;
 
     public Menu() {
-
+        contentImgUrls = new ArrayList<String>();
     }
 
     public String getId() {

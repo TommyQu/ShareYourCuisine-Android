@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.Toast;
 
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.rengwuxian.materialedittext.MaterialEditText;
@@ -54,6 +55,7 @@ public class CreateMenuActivity extends AppCompatActivity implements MenuService
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mUser;
+    private MaterialDialog mMaterialDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -98,17 +100,22 @@ public class CreateMenuActivity extends AppCompatActivity implements MenuService
         mSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mMaterialDialog = new MaterialDialog.Builder(CreateMenuActivity.this)
+                        .title("Creating menu")
+                        .content("Please wait")
+                        .progress(true, 0)
+                        .show();
                 Menu menu = new Menu();
                 menu.setTitle(mTitleET.getText().toString());
-                menu.setCookingTime("asd");
-                menu.setDisplayImgUrl("aa");
+                menu.setCookingTime(mCookingTimeSpin.getText().toString());
+                menu.setDisplayImgUrl(mContentImgUrls.get(0));
                 menu.setContent(mContentET.getText().toString());
                 menu.setContentImgUrls(mContentImgUrls);
                 menu.setCreatedBy(mUser.getUid());
                 menu.setCreatedAt(SYCUtils.getCurrentEST());
                 menu.setLastCommentedAt(SYCUtils.getCurrentEST());
                 MenuService menuService = new MenuService();
-                menuService.createMenu(menu, mContentImgUrls.get(0));
+                menuService.createMenu(menu, mContentImgUrls);
                 menuService.setCreateNewMenuListener(CreateMenuActivity.this);
             }
         });
@@ -167,12 +174,14 @@ public class CreateMenuActivity extends AppCompatActivity implements MenuService
 
     @Override
     public void createNewMenuSucceed() {
+        mMaterialDialog.dismiss();
         Toast.makeText(CreateMenuActivity.this, "Create menu successfully!", Toast.LENGTH_SHORT).show();
         finish();
     }
 
     @Override
     public void createNewMenuFail(String errorMsg) {
+        mMaterialDialog.dismiss();
         Toast.makeText(CreateMenuActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
     }
 }
