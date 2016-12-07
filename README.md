@@ -15,3 +15,5 @@ Material Dialogs: https://github.com/afollestad/material-dialogs
 Compressor: https://github.com/zetbaitsu/Compressor
 
 FishBun (Image picker): https://github.com/sangcomz/FishBun
+
+Validator: https://github.com/ragunathjawahar/android-saripaar
