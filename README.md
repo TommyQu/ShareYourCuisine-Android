@@ -1,8 +1,9 @@
 # ShareYourCuisine-Android
 
-Database: Google Firebase
+# Database:
+Google Firebase
 
-Libraries:
+# Libraries:
 
 MaterialEditText: https://github.com/rengwuxian/MaterialEditText
 
