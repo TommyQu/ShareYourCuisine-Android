@@ -19,3 +19,5 @@ FishBun (Image picker): https://github.com/sangcomz/FishBun
 Validator: https://github.com/ragunathjawahar/android-saripaar
 
 Material DateTime Picker: https://github.com/wdullaer/MaterialDateTimePicker
+
+CircleImageView: https://github.com/hdodenhof/CircleImageView
