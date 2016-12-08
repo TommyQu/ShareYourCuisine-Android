@@ -20,10 +20,13 @@ import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.fragment.HomeFragment;
 import com.toe.shareyourcuisine.fragment.MenuFragment;
 import com.toe.shareyourcuisine.model.User;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -31,8 +34,12 @@ public class MainActivity extends AppCompatActivity
     private static final String TAG = "ToeMainActivity:";
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
+    private FirebaseUser mFirebaseUser;
     private NavigationView mNavigationView;
     private String mAuthAction = "";
+    private TextView mEmailTV;
+    private TextView mNameTV;
+    private CircleImageView mAvatarCIV;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,34 +49,6 @@ public class MainActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
         getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
         mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
-                if (firebaseUser != null) {
-                    // User is signed in
-                    mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(false);
-                    mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(true);
-                    mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(true);
-                    TextView emailTv = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.email_tv);
-                    emailTv.setText(firebaseUser.getEmail());
-                } else {
-                    // User is signed out
-                    mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(true);
-                    mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(false);
-                    mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(false);
-                    TextView emailTv = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.email_tv);
-                    emailTv.setText("");
-                    User user = User.findById(User.class, 1);
-                    if(user != null)
-                        user.delete();
-                    if(mAuthAction.equalsIgnoreCase("sign out"))
-                        Toast.makeText(MainActivity.this, "Sign out successfully!",
-                                Toast.LENGTH_SHORT).show();
-                }
-                // ...
-            }
-        };
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -80,6 +59,41 @@ public class MainActivity extends AppCompatActivity
         mNavigationView = (NavigationView) findViewById(R.id.nav_view);
         mNavigationView.setNavigationItemSelectedListener(this);
         mNavigationView.getMenu().getItem(0).setChecked(true);
+        mEmailTV = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.email_tv);
+        mNameTV = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.name_tv);
+        mAvatarCIV = (CircleImageView)mNavigationView.getHeaderView(0).findViewById(R.id.avatar_civ);
+
+        mAuthListener = new FirebaseAuth.AuthStateListener() {
+            @Override
+            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
+                mFirebaseUser = firebaseAuth.getCurrentUser();
+                if (mFirebaseUser != null) {
+                    // User is signed in
+                    mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(false);
+                    mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(true);
+                    mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(true);
+                    User user = User.find(User.class, "email = ?", mFirebaseUser.getEmail()).get(0);
+                    Picasso.with(MainActivity.this).load(user.getAvatarUrl()).into(mAvatarCIV);
+                    mEmailTV.setText(user.getEmail());
+                    mNameTV.setText(user.getfName() + " " + user.getlName());
+                } else {
+                    // User is signed out
+                    mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(true);
+                    mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(false);
+                    mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(false);
+                    Picasso.with(MainActivity.this).load(R.drawable.avatar).into(mAvatarCIV);
+                    mEmailTV.setText("");
+                    mNameTV.setText("Guest");
+                    User user = User.findById(User.class, 1);
+                    if(user != null)
+                        user.delete();
+                    if(mAuthAction.equalsIgnoreCase("sign out"))
+                        Toast.makeText(MainActivity.this, "Sign out successfully!",
+                                Toast.LENGTH_SHORT).show();
+                }
+                // ...
+            }
+        };
     }
 
     @Override
@@ -151,6 +165,8 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_sign_out) {
             mAuth.signOut();
             mAuthAction = "sign out";
+            User user = User.find(User.class, "email = ?", mFirebaseUser.getEmail()).get(0);
+            user.delete();
         } else if (id == R.id.nav_profile) {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);

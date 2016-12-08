@@ -94,7 +94,7 @@ public class CreateMenuActivity extends AppCompatActivity implements MenuService
         mContentImgLayoutInflater = LayoutInflater.from(CreateMenuActivity.this);
 
         final String[] COUNTRIES = new String[] {
-                "Belgium", "France", "Italy", "Germany", "Spain"
+                "< 10 min", "10~30 min", "30~60 min", "> 60 min"
         };
         ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
                 android.R.layout.simple_dropdown_item_1line, COUNTRIES);

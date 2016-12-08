@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.Toast;
 
 //import com.afollestad.materialdialogs.MaterialDialog;
+import com.afollestad.materialdialogs.MaterialDialog;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
@@ -43,6 +44,7 @@ public class SignInActivity extends AppCompatActivity implements UserService.Sig
     private Button mRegisterBtn;
     private Button mSubmitBtn;
     private Validator mValidator;
+    private MaterialDialog mMaterialDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,17 +85,24 @@ public class SignInActivity extends AppCompatActivity implements UserService.Sig
 
     @Override
     public void signInSucceed() {
+        mMaterialDialog.dismiss();
         Toast.makeText(SignInActivity.this, "Sign in successfully!", Toast.LENGTH_SHORT).show();
         finish();
     }
 
     @Override
     public void signInFail(String errorMsg) {
+        mMaterialDialog.dismiss();
         Toast.makeText(SignInActivity.this, errorMsg, Toast.LENGTH_SHORT).show();
     }
 
     @Override
     public void onValidationSucceeded() {
+        mMaterialDialog = new MaterialDialog.Builder(SignInActivity.this)
+                .title("Logging in")
+                .content("Please wait")
+                .progress(true, 0)
+                .show();
         UserService userService = new UserService(SignInActivity.this);
         userService.setSignInListener((UserService.SignInListener) SignInActivity.this);
         userService.signIn(mEmailET.getText().toString(), mPwdET.getText().toString());

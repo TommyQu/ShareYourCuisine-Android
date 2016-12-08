@@ -13,9 +13,11 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -62,7 +64,7 @@ public class UserService {
         mRegisterListener = registerListener;
     }
 
-    public void signIn(String email, String pwd) {
+    public void signIn(final String email, String pwd) {
         mAuth.signInWithEmailAndPassword(email, pwd)
                 .addOnCompleteListener((Activity) mContext, new OnCompleteListener<AuthResult>() {
                     @Override
@@ -70,14 +72,30 @@ public class UserService {
                         if (!task.isSuccessful()) {
                             mSignInListener.signInFail(task.getException().getMessage());
                         } else {
-                            User user = new User();
-                            user.setEmail(task.getResult().getUser().getEmail());
-                            user.setUid(task.getResult().getUser().getUid());
-                            user.save();
-                            mSignInListener.signInSucceed();
+                            getUserInfo(task.getResult().getUser().getUid());
                         }
                     }
                 });
+    }
+
+    public void getUserInfo(String uid) {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        DatabaseReference userRef = firebaseDatabase.getReference("user");
+        userRef.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot userSnapShot: dataSnapshot.getChildren()) {
+                    User user = userSnapShot.getValue(User.class);
+                    user.save();
+                }
+                mSignInListener.signInSucceed();
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mSignInListener.signInFail(databaseError.getMessage());
+            }
+        });
     }
 
     public void register(User user, String pwd) {
@@ -118,6 +136,7 @@ public class UserService {
         });
     }
 
+//    Add user detail information to user table
     public void createUser() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference userRef = firebaseDatabase.getReference("user");
