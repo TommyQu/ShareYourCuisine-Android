@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity;
 
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.toe.shareyourcuisine.R;
-import com.toe.shareyourcuisine.model.UserProfile;
 
 /**
  * Created by HQu on 11/29/2016.

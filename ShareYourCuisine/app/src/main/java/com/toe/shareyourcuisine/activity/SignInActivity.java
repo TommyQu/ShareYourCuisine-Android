@@ -24,7 +24,7 @@ import com.mobsandgeeks.saripaar.annotation.Email;
 import com.mobsandgeeks.saripaar.annotation.Password;
 import com.rengwuxian.materialedittext.MaterialEditText;
 import com.toe.shareyourcuisine.R;
-import com.toe.shareyourcuisine.model.UserProfile;
+import com.toe.shareyourcuisine.model.User;
 import com.toe.shareyourcuisine.service.UserService;
 
 import java.util.List;

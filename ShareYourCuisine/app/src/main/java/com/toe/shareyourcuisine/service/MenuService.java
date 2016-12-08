@@ -20,7 +20,6 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.toe.shareyourcuisine.model.Menu;
-import com.toe.shareyourcuisine.model.UserProfile;
 
 import org.json.JSONObject;
 

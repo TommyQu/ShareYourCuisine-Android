@@ -149,6 +149,8 @@ public class CreateMenuActivity extends AppCompatActivity implements MenuService
         switch (requestCode) {
             case Define.ALBUM_REQUEST_CODE:
                 if(resultCode == RESULT_OK) {
+                    mSelectedImageIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
+                    mSelectedImageIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
                     mContentImgUrls = data.getStringArrayListExtra(Define.INTENT_PATH);
                     mContentImgLayout.removeAllViews();
                     //Initiate first image as default selected

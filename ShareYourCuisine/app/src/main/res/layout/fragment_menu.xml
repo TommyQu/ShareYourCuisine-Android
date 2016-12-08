@@ -4,10 +4,12 @@
               android:orientation="vertical"
               android:layout_width="match_parent"
               android:layout_height="match_parent">
-    <TextView
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/my_recycler_view"
+        android:scrollbars="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="xxxx"/>
+        android:layout_height="match_parent"/>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/create_menu_fab"

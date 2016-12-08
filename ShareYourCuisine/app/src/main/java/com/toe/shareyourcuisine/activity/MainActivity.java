@@ -23,7 +23,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.fragment.HomeFragment;
 import com.toe.shareyourcuisine.fragment.MenuFragment;
-import com.toe.shareyourcuisine.model.UserProfile;
+import com.toe.shareyourcuisine.model.User;
 
 public class MainActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -45,14 +45,14 @@ public class MainActivity extends AppCompatActivity
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                FirebaseUser user = firebaseAuth.getCurrentUser();
-                if (user != null) {
+                FirebaseUser firebaseUser = firebaseAuth.getCurrentUser();
+                if (firebaseUser != null) {
                     // User is signed in
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(false);
                     mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(true);
                     mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(true);
                     TextView emailTv = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.email_tv);
-                    emailTv.setText(user.getEmail());
+                    emailTv.setText(firebaseUser.getEmail());
                 } else {
                     // User is signed out
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(true);
@@ -60,9 +60,9 @@ public class MainActivity extends AppCompatActivity
                     mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(false);
                     TextView emailTv = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.email_tv);
                     emailTv.setText("");
-                    UserProfile userProfile = UserProfile.findById(UserProfile.class, 1);
-                    if(userProfile != null)
-                        userProfile.delete();
+                    User user = User.findById(User.class, 1);
+                    if(user != null)
+                        user.delete();
                     if(mAuthAction.equalsIgnoreCase("sign out"))
                         Toast.makeText(MainActivity.this, "Sign out successfully!",
                                 Toast.LENGTH_SHORT).show();
