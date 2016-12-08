@@ -72,10 +72,16 @@ public class MainActivity extends AppCompatActivity
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(false);
                     mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(true);
                     mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(true);
-                    User user = User.find(User.class, "email = ?", mFirebaseUser.getEmail()).get(0);
-                    Picasso.with(MainActivity.this).load(user.getAvatarUrl()).into(mAvatarCIV);
-                    mEmailTV.setText(user.getEmail());
-                    mNameTV.setText(user.getfName() + " " + user.getlName());
+                    try {
+                        User user = User.find(User.class, "email = ?", mFirebaseUser.getEmail()).get(0);
+                        Picasso.with(MainActivity.this).load(user.getAvatarUrl()).into(mAvatarCIV);
+                        mEmailTV.setText(user.getEmail());
+                        mNameTV.setText(user.getfName() + " " + user.getlName());
+                    } catch (Exception e) {
+                        Log.i(TAG, e.getMessage());
+                        mAuth.signOut();
+                    }
+
                 } else {
                     // User is signed out
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(true);
@@ -84,9 +90,14 @@ public class MainActivity extends AppCompatActivity
                     Picasso.with(MainActivity.this).load(R.drawable.avatar).into(mAvatarCIV);
                     mEmailTV.setText("");
                     mNameTV.setText("Guest");
-                    User user = User.findById(User.class, 1);
-                    if(user != null)
-                        user.delete();
+                    try {
+                        User user = User.findById(User.class, 1);
+                        if(user != null)
+                            user.delete();
+                    } catch (Exception e) {
+                        Log.i(TAG, e.getMessage());
+                    }
+
                     if(mAuthAction.equalsIgnoreCase("sign out"))
                         Toast.makeText(MainActivity.this, "Sign out successfully!",
                                 Toast.LENGTH_SHORT).show();
@@ -165,8 +176,13 @@ public class MainActivity extends AppCompatActivity
         } else if (id == R.id.nav_sign_out) {
             mAuth.signOut();
             mAuthAction = "sign out";
-            User user = User.find(User.class, "email = ?", mFirebaseUser.getEmail()).get(0);
-            user.delete();
+            try {
+                User user = User.find(User.class, "email = ?", mFirebaseUser.getEmail()).get(0);
+                user.delete();
+            } catch (Exception e) {
+                Log.i(TAG, e.getMessage());
+            }
+
         } else if (id == R.id.nav_profile) {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
             startActivity(intent);
