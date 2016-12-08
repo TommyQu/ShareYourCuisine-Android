@@ -17,3 +17,5 @@ Compressor: https://github.com/zetbaitsu/Compressor
 FishBun (Image picker): https://github.com/sangcomz/FishBun
 
 Validator: https://github.com/ragunathjawahar/android-saripaar
+
+Material DateTime Picker: https://github.com/wdullaer/MaterialDateTimePicker
