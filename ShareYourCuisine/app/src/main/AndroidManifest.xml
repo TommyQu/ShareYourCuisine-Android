@@ -38,8 +38,8 @@
             android:name=".activity.ProfileActivity"
             android:label="Profile" >
         </activity>
-        <activity android:name=".activity.CreateMenuActivity"
-            android:label="Create Menu">
+        <activity android:name=".activity.CreateRecipeActivity"
+            android:label="Create Recipe">
         </activity>
     </application>
 

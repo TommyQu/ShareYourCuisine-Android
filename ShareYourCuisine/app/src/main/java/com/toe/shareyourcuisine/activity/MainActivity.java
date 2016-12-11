@@ -3,10 +3,7 @@ package com.toe.shareyourcuisine.activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
-import android.support.design.widget.FloatingActionButton;
-import android.support.design.widget.Snackbar;
 import android.util.Log;
-import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -23,7 +20,7 @@ import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.fragment.HomeFragment;
-import com.toe.shareyourcuisine.fragment.MenuFragment;
+import com.toe.shareyourcuisine.fragment.RecipeFragment;
 import com.toe.shareyourcuisine.model.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -163,8 +160,8 @@ public class MainActivity extends AppCompatActivity
         if (id == R.id.nav_home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
             setTitle(item.getTitle());
-        } else if (id == R.id.nav_menus) {
-            getSupportFragmentManager().beginTransaction().replace(R.id.content, new MenuFragment()).commit();
+        } else if (id == R.id.nav_recipes) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, new RecipeFragment()).commit();
             setTitle(item.getTitle());
         } else if (id == R.id.nav_posts) {
             setTitle(item.getTitle());

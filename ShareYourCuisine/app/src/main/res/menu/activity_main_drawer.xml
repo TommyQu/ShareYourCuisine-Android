@@ -7,9 +7,9 @@
             android:icon="@drawable/ic_home"
             android:title="Home"/>
         <item
-            android:id="@+id/nav_menus"
+            android:id="@+id/nav_recipes"
             android:icon="@drawable/ic_restaurant"
-            android:title="Menus"/>
+            android:title="Recipes"/>
         <item
             android:id="@+id/nav_posts"
             android:icon="@drawable/ic_action_news"

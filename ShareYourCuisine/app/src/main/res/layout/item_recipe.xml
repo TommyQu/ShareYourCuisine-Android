@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+              android:orientation="vertical"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+
+    <ImageView
+        android:id="@+id/display_img_iv"
+        android:layout_width="100dp"
+        android:layout_height="100dp"/>
+
+    <TextView
+        android:id="@+id/title_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/display_img_iv"
+        android:layout_marginTop="-5dp"
+        android:layout_marginLeft="20dp"
+        style="@style/ItemRecipeTitle"
+        android:text="Title"/>
+
+    <com.iarcuschin.simpleratingbar.SimpleRatingBar
+        android:id="@+id/rating_srb"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_tv"
+        android:layout_alignLeft="@id/title_tv"
+        android:layout_marginTop="2dp"
+        android:layout_marginBottom="5dp"
+        app:srb_starSize="20dp"
+        app:srb_numberOfStars="5"
+        app:srb_rating="3"
+        app:srb_stepSize="0.5"/>
+
+    <ImageView
+        android:id="@+id/flavor_iv"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_below="@id/rating_srb"
+        android:layout_alignLeft="@id/title_tv"
+        android:src="@drawable/ic_action_emo_tongue"/>
+
+    <TextView
+        android:id="@+id/flavor_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/rating_srb"
+        android:layout_toRightOf="@id/flavor_iv"
+        android:layout_marginLeft="5dp"
+        android:text="Flavor"/>
+
+
+    <ImageView
+        android:id="@+id/time_iv"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_below="@id/flavor_iv"
+        android:layout_alignLeft="@id/title_tv"
+        android:src="@drawable/ic_action_alarm"/>
+
+    <TextView
+        android:id="@+id/time_tv"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/flavor_iv"
+        android:layout_alignLeft="@id/flavor_tv"
+        android:text="Time"/>
+
+    <!--<TextView-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:layout_below="@id/title_tv"-->
+        <!--android:layout_toRightOf="@id/display_img_iv"-->
+        <!--android:text="100 Likes"/>-->
+</RelativeLayout>
