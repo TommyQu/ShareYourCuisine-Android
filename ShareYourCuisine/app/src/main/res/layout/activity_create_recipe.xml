@@ -36,10 +36,44 @@
             app:met_floatingLabel="highlight"/>
 
         <TextView
-            android:id="@+id/content_img_title"
+            android:id="@+id/display_img_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/content_et"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:text="Display Image"/>
+
+        <ImageView
+            android:id="@+id/display_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/display_img_title"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_centerHorizontal="true"/>
+
+        <Button
+            android:id="@+id/select_display_img_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/display_img"
+            android:layout_marginTop="32dp"
+            android:text="Select Display Image"
+            style="@style/SubButton"/>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_below="@id/select_display_img_btn"
+            android:layout_width="match_parent"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_height="1dp"
+            android:background="@color/dividerGrey" />
+
+        <TextView
+            android:id="@+id/content_img_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/divider"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:text="Content Images"/>
 
         <ImageView
@@ -47,6 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/content_img_title"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_centerHorizontal="true"/>
 
         <HorizontalScrollView
@@ -70,9 +105,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/content_img_hsv"
             android:layout_marginTop="32dp"
-            android:background="@color/colorRed"
-            android:textColor="@color/colorWhite"
-            android:text="Select Images"/>
+            android:text="Select Images"
+            style="@style/SubButton"/>
 
         <Button
             android:id="@+id/submit_btn"
@@ -80,9 +114,8 @@
             android:layout_height="wrap_content"
             android:layout_below="@id/select_img_btn"
             android:layout_marginTop="32dp"
-            android:background="@color/colorRed"
-            android:textColor="@color/colorWhite"
-            android:text="Submit"/>
+            android:text="Submit"
+            style="@style/PrimaryButton"/>
 
     </RelativeLayout>
 </ScrollView>

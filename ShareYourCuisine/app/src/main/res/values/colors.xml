@@ -4,4 +4,7 @@
     <color name="colorAccent">#FF4081</color>
     <color name="colorRed">#D32F2F</color>
     <color name="colorWhite">#FFFFFF</color>
+    <color name="colorOrange">#FF9800</color>
+    <color name="dividerGrey">#EEEEEE</color>
+    <color name="textGrey">#9E9E9E</color>
 </resources>

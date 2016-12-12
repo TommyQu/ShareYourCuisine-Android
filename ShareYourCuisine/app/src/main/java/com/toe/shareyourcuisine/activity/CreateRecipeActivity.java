@@ -54,6 +54,8 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
     private LinearLayout mContentImgLayout;
     private LayoutInflater mContentImgLayoutInflater;
     private ImageView mSelectedImageIV;
+    private ImageView mDisplayImgIV;
+    private Button mSelectDisplayImgBtn;
     private Button mSubmitBtn;
     private ArrayList<String> mContentImgUrls;
     private FirebaseAuth mAuth;
@@ -61,6 +63,7 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
     private FirebaseUser mUser;
     private MaterialDialog mMaterialDialog;
     private Validator mValidator;
+    private String mSelectImgAction;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +86,8 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
         mSelectImgBtn = (Button)findViewById(R.id.select_img_btn);
         mContentImgLayout = (LinearLayout)findViewById(R.id.content_img_layout);
         mSelectedImageIV = (ImageView)findViewById(R.id.selected_img);
+        mDisplayImgIV = (ImageView)findViewById(R.id.display_img);
+        mSelectDisplayImgBtn = (Button)findViewById(R.id.select_display_img_btn);
         mSubmitBtn = (Button)findViewById(R.id.submit_btn);
         mContentImgLayoutInflater = LayoutInflater.from(CreateRecipeActivity.this);
 
@@ -93,9 +98,21 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
                 android.R.layout.simple_dropdown_item_1line, COUNTRIES);
         mCookingTimeSpin.setAdapter(adapter);
 
+        mSelectDisplayImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mSelectImgAction = "display";
+                FishBun.with(CreateRecipeActivity.this)
+                        .setActionBarColor(Color.rgb(211, 47, 47), Color.rgb(211, 47, 47))
+                        .setPickerCount(1)
+                        .setCamera(true)
+                        .startAlbum();
+            }
+        });
         mSelectImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mSelectImgAction = "content";
                 FishBun.with(CreateRecipeActivity.this)
                         .setActionBarColor(Color.rgb(211, 47, 47), Color.rgb(211, 47, 47))
                         .setPickerCount(5)
@@ -147,25 +164,32 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
         switch (requestCode) {
             case Define.ALBUM_REQUEST_CODE:
                 if(resultCode == RESULT_OK) {
-                    mSelectedImageIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
-                    mSelectedImageIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
-                    mContentImgLayout.removeAllViews();
-                    mContentImgUrls = data.getStringArrayListExtra(Define.INTENT_PATH);
-                    //Initiate first image as default selected
-                    Picasso.with(CreateRecipeActivity.this).load(new File(mContentImgUrls.get(0))).fit().centerCrop().into(mSelectedImageIV);
-                    for (int i = 0; i < mContentImgUrls.size(); i++) {
-                        View view = mContentImgLayoutInflater.inflate(R.layout.content_img_item, mContentImgLayout, false);
-                        ImageView iv = (ImageView) view.findViewById(R.id.content_img);
-                        final String imgUrl = mContentImgUrls.get(i);
-                        Picasso.with(CreateRecipeActivity.this).load(new File(imgUrl)).fit().centerCrop().into(iv);
-                        iv.setOnClickListener(new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                Picasso.with(CreateRecipeActivity.this).load(new File(imgUrl)).fit().centerCrop().into(mSelectedImageIV);
-                            }
-                        });
-                        mContentImgLayout.addView(view);
+                    if(mSelectImgAction.equalsIgnoreCase("content")) {
+                        mSelectedImageIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
+                        mSelectedImageIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
+                        mContentImgLayout.removeAllViews();
+                        mContentImgUrls = data.getStringArrayListExtra(Define.INTENT_PATH);
+                        //Initiate first image as default selected
+                        Picasso.with(CreateRecipeActivity.this).load(new File(mContentImgUrls.get(0))).fit().centerCrop().into(mSelectedImageIV);
+                        for (int i = 0; i < mContentImgUrls.size(); i++) {
+                            View view = mContentImgLayoutInflater.inflate(R.layout.content_img_item, mContentImgLayout, false);
+                            ImageView iv = (ImageView) view.findViewById(R.id.content_img);
+                            final String imgUrl = mContentImgUrls.get(i);
+                            Picasso.with(CreateRecipeActivity.this).load(new File(imgUrl)).fit().centerCrop().into(iv);
+                            iv.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    Picasso.with(CreateRecipeActivity.this).load(new File(imgUrl)).fit().centerCrop().into(mSelectedImageIV);
+                                }
+                            });
+                            mContentImgLayout.addView(view);
+                        }
+                    } else {
+                        mDisplayImgIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
+                        mDisplayImgIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
+                        Picasso.with(CreateRecipeActivity.this).load(new File(data.getStringArrayListExtra(Define.INTENT_PATH).get(0))).fit().centerCrop().into(mDisplayImgIV);
                     }
+
                 }
         }
     }

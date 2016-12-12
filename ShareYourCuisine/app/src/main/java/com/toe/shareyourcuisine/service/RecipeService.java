@@ -17,6 +17,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.toe.shareyourcuisine.model.Recipe;
 import com.toe.shareyourcuisine.model.User;
+import com.toe.shareyourcuisine.utils.SYCUtils;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -92,7 +93,7 @@ public class RecipeService {
     public void uploadDisplayImg(String displayImgUrl, String uid) {
         File compressedImg = new Compressor.Builder(mContext).build().compressToFile(new File(displayImgUrl));
         Uri file = Uri.fromFile(compressedImg);
-        mImgStorageRef = mStorageRef.child("images/" + uid + "/" + file.getLastPathSegment());
+        mImgStorageRef = mStorageRef.child("images/" + uid + "/" + SYCUtils.getRandomString());
         UploadTask uploadTask = mImgStorageRef.putFile(file);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -115,7 +116,7 @@ public class RecipeService {
             final int finalIndex = i;
             File compressedImg = new Compressor.Builder(mContext).build().compressToFile(new File(contentImgUrls.get(i)));
             Uri file = Uri.fromFile(compressedImg);
-            mImgStorageRef = mStorageRef.child("images/" + uid + "/" + file.getLastPathSegment());
+            mImgStorageRef = mStorageRef.child("images/" + uid + "/" + SYCUtils.getRandomString());
             UploadTask uploadTask = mImgStorageRef.putFile(file);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
