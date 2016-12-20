@@ -41,6 +41,9 @@
         <activity android:name=".activity.CreateRecipeActivity"
             android:label="Create Recipe">
         </activity>
+        <activity android:name=".activity.OneRecipeActivity"
+                  android:label="One Recipe">
+        </activity>
     </application>
 
 </manifest>

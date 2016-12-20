@@ -4,6 +4,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -22,6 +23,7 @@ import com.toe.shareyourcuisine.utils.SYCUtils;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import id.zelory.compressor.Compressor;
 
@@ -70,7 +72,9 @@ public class RecipeService {
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Recipe> recipes = new ArrayList<Recipe>();
                 for(DataSnapshot recipeSnapShot: dataSnapshot.getChildren()) {
-                    recipes.add(recipeSnapShot.getValue(Recipe.class));
+                    Recipe recipe = recipeSnapShot.getValue(Recipe.class);
+                    recipe.setUid(recipeSnapShot.getKey());
+                    recipes.add(recipe);
                 }
                 mGetAllRecipesListener.getAllRecipesSucceed(recipes);
             }
@@ -93,7 +97,7 @@ public class RecipeService {
     public void uploadDisplayImg(String displayImgUrl, String uid) {
         File compressedImg = new Compressor.Builder(mContext).build().compressToFile(new File(displayImgUrl));
         Uri file = Uri.fromFile(compressedImg);
-        mImgStorageRef = mStorageRef.child("images/" + uid + "/" + SYCUtils.getRandomString());
+        mImgStorageRef = mStorageRef.child("images/" + uid + "/" + UUID.randomUUID().toString());
         UploadTask uploadTask = mImgStorageRef.putFile(file);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -116,7 +120,7 @@ public class RecipeService {
             final int finalIndex = i;
             File compressedImg = new Compressor.Builder(mContext).build().compressToFile(new File(contentImgUrls.get(i)));
             Uri file = Uri.fromFile(compressedImg);
-            mImgStorageRef = mStorageRef.child("images/" + uid + "/" + SYCUtils.getRandomString());
+            mImgStorageRef = mStorageRef.child("images/" + uid + "/" + UUID.randomUUID().toString());
             UploadTask uploadTask = mImgStorageRef.putFile(file);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override

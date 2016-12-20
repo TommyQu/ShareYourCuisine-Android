@@ -26,13 +26,22 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
     private static final String TAG = "ToeRecipeRVD:";
     private Context mContext;
     private List<Recipe> mRecipes;
+    private static RecipeItemClickListener mRecipeItemClickListener;
 
     public RecipeRecyclerViewAdapter(Context context, List<Recipe> recipes) {
         mContext = context;
         mRecipes = recipes;
     }
 
-    public static class RecipeViewHolder extends RecyclerView.ViewHolder {
+    public interface RecipeItemClickListener {
+        public void onItemClick(int position, View v);
+    }
+
+    public void setRecipeItemClickListener(RecipeItemClickListener recipeItemClickListener) {
+        mRecipeItemClickListener = recipeItemClickListener;
+    }
+
+    public static class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public ImageView mDisplayImgIV;
         public TextView mTitleTV;
         public TextView mFlavorTV;
@@ -43,6 +52,12 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
             mTitleTV = (TextView)itemView.findViewById(R.id.title_tv);
             mFlavorTV = (TextView)itemView.findViewById(R.id.flavor_tv);
             mTimeTV = (TextView)itemView.findViewById(R.id.time_tv);
+            itemView.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            mRecipeItemClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
 
@@ -57,7 +72,7 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
     public void onBindViewHolder(RecipeViewHolder holder, int position) {
         Picasso.with(mContext).load(mRecipes.get(position).getDisplayImgUrl()).fit().centerCrop().into(holder.mDisplayImgIV);
         holder.mTitleTV.setText(mRecipes.get(position).getTitle());
-        holder.mFlavorTV.setText(mRecipes.get(position).getTitle());
+        holder.mFlavorTV.setText(mRecipes.get(position).getFlavorTypes());
         holder.mTimeTV.setText(mRecipes.get(position).getCookingTime());
     }
 

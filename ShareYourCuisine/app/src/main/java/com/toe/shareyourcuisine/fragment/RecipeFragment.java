@@ -2,6 +2,7 @@ package com.toe.shareyourcuisine.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -18,10 +19,14 @@ import android.widget.Toast;
 
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.activity.CreateRecipeActivity;
+import com.toe.shareyourcuisine.activity.MainActivity;
+import com.toe.shareyourcuisine.activity.OneRecipeActivity;
 import com.toe.shareyourcuisine.activity.SignInActivity;
 import com.toe.shareyourcuisine.adapter.RecipeRecyclerViewAdapter;
 import com.toe.shareyourcuisine.model.Recipe;
 import com.toe.shareyourcuisine.service.RecipeService;
+
+import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -33,7 +38,7 @@ public class RecipeFragment extends Fragment implements RecipeService.GetAllReci
 
     private static final String TAG = "ToeRecipeFragment:";
     private RecyclerView mRecipeRV;
-    private RecyclerView.Adapter mAdapter;
+    private RecipeRecyclerViewAdapter mAdapter;
     private FloatingActionButton mCreateRecipeFAB;
     private SwipeRefreshLayout mRecipeSRL;
 
@@ -48,8 +53,13 @@ public class RecipeFragment extends Fragment implements RecipeService.GetAllReci
         mCreateRecipeFAB.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(getActivity(), CreateRecipeActivity.class);
-                startActivity(intent);
+                if(((MainActivity)getActivity()).getAuth().getCurrentUser() != null) {
+                    Intent intent = new Intent(getActivity(), CreateRecipeActivity.class);
+                    startActivity(intent);
+                } else {
+                    Toast.makeText(getActivity(), "Please log in!", Toast.LENGTH_SHORT).show();
+                }
+
             }
         });
         mRecipeSRL.setOnRefreshListener(this);
@@ -59,8 +69,17 @@ public class RecipeFragment extends Fragment implements RecipeService.GetAllReci
     }
 
     @Override
-    public void getAllRecipesSucceed(List<Recipe> recipes) {
+    public void getAllRecipesSucceed(final List<Recipe> recipes) {
         mAdapter = new RecipeRecyclerViewAdapter(getActivity(), recipes);
+        mAdapter.setRecipeItemClickListener(new RecipeRecyclerViewAdapter.RecipeItemClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
+                Intent intent = new Intent(getActivity(), OneRecipeActivity.class);
+                Parcelable wrapped = Parcels.wrap(recipes.get(position));
+                intent.putExtra("recipe", wrapped);
+                startActivity(intent);
+            }
+        });
         mRecipeRV.setAdapter(mAdapter);
         mRecipeSRL.setRefreshing(false);
     }

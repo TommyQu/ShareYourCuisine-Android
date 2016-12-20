@@ -188,4 +188,12 @@ public class MainActivity extends AppCompatActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
+    public FirebaseAuth getAuth() {
+        return mAuth;
+    }
+
+    public void setAuth(FirebaseAuth auth) {
+        mAuth = auth;
+    }
 }

@@ -22,16 +22,25 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/title_et"
-            android:layout_marginTop="20dp"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
             android:hint="Cooking time"
             app:met_floatingLabel="normal"/>
+
+        <com.rengwuxian.materialedittext.MaterialEditText
+            android:id="@+id/flavor_types_et"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cooking_time_spin"
+            android:hint="Flavor Types"
+            android:focusableInTouchMode="false"
+            app:met_floatingLabel="highlight"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/content_et"
             android:inputType="textMultiLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/cooking_time_spin"
+            android:layout_below="@id/flavor_types_et"
             android:hint="Content"
             app:met_floatingLabel="highlight"/>
 

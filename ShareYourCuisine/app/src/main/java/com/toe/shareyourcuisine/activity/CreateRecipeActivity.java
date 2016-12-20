@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -44,12 +45,14 @@ import java.util.List;
 
 public class CreateRecipeActivity extends AppCompatActivity implements RecipeService.CreateNewRecipeListener, Validator.ValidationListener{
 
-    private static final String TAG = "ToeCreateRecipeActivity:";
+    private static final String TAG = "ToeCRecipeActivity:";
     @NotEmpty
     private MaterialEditText mTitleET;
     private MaterialBetterSpinner mCookingTimeSpin;
     @NotEmpty
     private MaterialEditText mContentET;
+    @NotEmpty
+    private MaterialEditText mFlavorTypesET;
     private Button mSelectImgBtn;
     private LinearLayout mContentImgLayout;
     private LayoutInflater mContentImgLayoutInflater;
@@ -58,12 +61,14 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
     private Button mSelectDisplayImgBtn;
     private Button mSubmitBtn;
     private ArrayList<String> mContentImgUrls;
+    private String mDisplayImgUrl;
     private FirebaseAuth mAuth;
     private FirebaseAuth.AuthStateListener mAuthListener;
     private FirebaseUser mUser;
     private MaterialDialog mMaterialDialog;
     private Validator mValidator;
     private String mSelectImgAction;
+    private String mFlavorTypes;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -83,6 +88,7 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
         mTitleET = (MaterialEditText)findViewById(R.id.title_et);
         mCookingTimeSpin = (MaterialBetterSpinner)findViewById(R.id.cooking_time_spin);
         mContentET = (MaterialEditText)findViewById(R.id.content_et);
+        mFlavorTypesET = (MaterialEditText)findViewById(R.id.flavor_types_et);
         mSelectImgBtn = (Button)findViewById(R.id.select_img_btn);
         mContentImgLayout = (LinearLayout)findViewById(R.id.content_img_layout);
         mSelectedImageIV = (ImageView)findViewById(R.id.selected_img);
@@ -98,6 +104,34 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
                 android.R.layout.simple_dropdown_item_1line, COUNTRIES);
         mCookingTimeSpin.setAdapter(adapter);
 
+        mFlavorTypesET.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                new MaterialDialog.Builder(CreateRecipeActivity.this)
+                        .title("Select flavor types")
+                        .items(R.array.flavor_types)
+                        .itemsCallbackMultiChoice(null, new MaterialDialog.ListCallbackMultiChoice() {
+                            @Override
+                            public boolean onSelection(MaterialDialog dialog, Integer[] which, CharSequence[] text) {
+                                /**
+                                 * If you use alwaysCallMultiChoiceCallback(), which is discussed below,
+                                 * returning false here won't allow the newly selected check box to actually be selected.
+                                 * See the limited multi choice dialog example in the sample project for details.
+                                 **/
+                                mFlavorTypes = "";
+                                for(int i = 0; i < text.length; i++) {
+                                    mFlavorTypes += text[i] + ", ";
+                                }
+                                mFlavorTypes = mFlavorTypes.substring(0, mFlavorTypes.length()-2);
+                                mFlavorTypesET.setText(mFlavorTypes);
+                                return true;
+                            }
+                        })
+                        .positiveText("Choose")
+                        .show();
+            }
+        });
+
         mSelectDisplayImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -109,6 +143,7 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
                         .startAlbum();
             }
         });
+//        Select content images
         mSelectImgBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -187,8 +222,9 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
                     } else {
                         mDisplayImgIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
                         mDisplayImgIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
-                        Picasso.with(CreateRecipeActivity.this).load(new File(data.getStringArrayListExtra(Define.INTENT_PATH).get(0))).fit().centerCrop().into(mDisplayImgIV);
-                    }
+                        mDisplayImgUrl = data.getStringArrayListExtra(Define.INTENT_PATH).get(0);
+                        Picasso.with(CreateRecipeActivity.this).load(new File(mDisplayImgUrl)).fit().centerCrop().into(mDisplayImgIV);
+                }
 
                 }
         }
@@ -210,9 +246,10 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
     @Override
     public void onValidationSucceeded() {
         Recipe recipe = new Recipe();
+        recipe.setFlavorTypes(mFlavorTypes);
         recipe.setTitle(mTitleET.getText().toString());
         recipe.setCookingTime(mCookingTimeSpin.getText().toString());
-        recipe.setDisplayImgUrl(mContentImgUrls.get(0));
+        recipe.setDisplayImgUrl(mDisplayImgUrl);
         recipe.setContent(mContentET.getText().toString());
         recipe.setCreatedBy(mUser.getUid());
         recipe.setCreatedAt(SYCUtils.getCurrentEST());

@@ -1,6 +1,11 @@
 package com.toe.shareyourcuisine.model;
 
+import android.content.Intent;
+
 import com.google.firebase.database.IgnoreExtraProperties;
+import com.orm.dsl.Unique;
+
+import org.parceler.Parcel;
 
 import java.util.ArrayList;
 
@@ -8,10 +13,12 @@ import java.util.ArrayList;
  * Created by HQu on 12/5/2016.
  */
 
+@Parcel(Parcel.Serialization.BEAN)
 @IgnoreExtraProperties
 public class Recipe {
 
-    private String id;
+    @Unique
+    private String uid;
     private String title;
     private String cookingTime;
     private String displayImgUrl;
@@ -20,17 +27,20 @@ public class Recipe {
     private Long createdAt;
     private String createdBy;
     private Long lastCommentedAt;
+    private String flavorTypes;
+    private Integer totalRates;
+    private Integer ratedUserNumber;
 
     public Recipe() {
         contentImgUrls = new ArrayList<String>();
     }
 
-    public String getId() {
-        return id;
+    public String getUid() {
+        return uid;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public void setUid(String uid) {
+        this.uid = uid;
     }
 
     public String getTitle() {
@@ -95,5 +105,29 @@ public class Recipe {
 
     public void setLastCommentedAt(Long lastCommentedAt) {
         this.lastCommentedAt = lastCommentedAt;
+    }
+
+    public String getFlavorTypes() {
+        return flavorTypes;
+    }
+
+    public void setFlavorTypes(String flavorTypes) {
+        this.flavorTypes = flavorTypes;
+    }
+
+    public Integer getTotalRates() {
+        return totalRates;
+    }
+
+    public void setTotalRates(Integer totalRates) {
+        this.totalRates = totalRates;
+    }
+
+    public Integer getRatedUserNumber() {
+        return ratedUserNumber;
+    }
+
+    public void setRatedUserNumber(Integer ratedUserNumber) {
+        this.ratedUserNumber = ratedUserNumber;
     }
 }

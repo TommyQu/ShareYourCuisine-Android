@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="cooking_time">
+        <item>Big Buck Bunny</item>
+        <item>Big Buck Bunny</item>
+        <item>Big Buck Bunny</item>
+        <item>Big Buck Bunny</item>
+    </string-array>
+    <string-array name="flavor_types">
+        <item>Sweet</item>
+        <item>Sour</item>
+        <item>Salty</item>
+        <item>Bitter</item>
+        <item>Umami</item>
+        <item>Spicy</item>
+    </string-array>
+</resources>
