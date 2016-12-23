@@ -25,13 +25,10 @@ import com.toe.shareyourcuisine.model.User;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
-public class MainActivity extends AppCompatActivity
+public class MainActivity extends BaseActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
     private static final String TAG = "ToeMainActivity:";
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseUser mFirebaseUser;
     private NavigationView mNavigationView;
     private String mAuthAction = "";
     private TextView mEmailTV;
@@ -45,7 +42,6 @@ public class MainActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
         getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
-        mAuth = FirebaseAuth.getInstance();
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -99,7 +95,7 @@ public class MainActivity extends AppCompatActivity
                         Toast.makeText(MainActivity.this, "Sign out successfully!",
                                 Toast.LENGTH_SHORT).show();
                 }
-                // ...
+
             }
         };
     }
@@ -189,11 +185,4 @@ public class MainActivity extends AppCompatActivity
         return true;
     }
 
-    public FirebaseAuth getAuth() {
-        return mAuth;
-    }
-
-    public void setAuth(FirebaseAuth auth) {
-        mAuth = auth;
-    }
 }

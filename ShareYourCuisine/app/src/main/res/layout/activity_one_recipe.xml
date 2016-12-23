@@ -1,10 +1,129 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-              android:layout_width="match_parent"
-              android:layout_height="match_parent">
+<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
+             xmlns:app="http://schemas.android.com/apk/res-auto"
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+    <RelativeLayout android:layout_width="match_parent"
+                    android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/display_img_iv"
-        android:layout_width="match_parent"
-        android:layout_height="300dp" />
-</RelativeLayout>
+        <ImageView
+            android:id="@+id/display_img_iv"
+            android:layout_width="match_parent"
+            android:layout_height="300dp" />
+
+        <TextView
+            android:id="@+id/title_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/display_img_iv"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_centerHorizontal="true"
+            android:textSize="25dp"/>
+
+        <com.iarcuschin.simpleratingbar.SimpleRatingBar
+            android:id="@+id/rating_srb"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_tv"
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:srb_starSize="20dp"
+            app:srb_numberOfStars="5"
+            app:srb_stepSize="0.5"/>
+
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/created_user_avatar_iv"
+            android:layout_width="80dp"
+            android:layout_height="80dp"
+            android:layout_below="@id/rating_srb"
+            android:layout_marginTop="30dp"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/created_user_name_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_below="@id/created_user_avatar_iv"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_centerHorizontal="true"/>
+
+        <View
+            android:id="@+id/center_shim"
+            android:layout_height="match_parent"
+            android:layout_width="50dp"
+            android:visibility="invisible"
+            android:layout_centerHorizontal="true"/>
+
+        <TextView
+            android:id="@+id/flavor_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/created_user_name_tv"
+            android:layout_marginTop="30dp"
+            android:layout_toLeftOf="@id/center_shim"
+            android:textColor="@color/textGrey"/>
+
+        <ImageView
+            android:id="@+id/flavor_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:layout_below="@id/created_user_name_tv"
+            android:layout_marginTop="30dp"
+            android:layout_toLeftOf="@id/flavor_tv"
+            android:src="@drawable/ic_action_emo_tongue"
+            android:tint="@color/textGrey"/>
+
+        <ImageView
+            android:id="@+id/cooking_time_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="22dp"
+            android:layout_below="@id/created_user_name_tv"
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@id/center_shim"
+            android:src="@drawable/ic_action_alarm"
+            android:tint="@color/textGrey"/>
+
+        <TextView
+            android:id="@+id/cooking_time_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/created_user_name_tv"
+            android:layout_marginTop="30dp"
+            android:layout_toRightOf="@id/cooking_time_iv"
+            android:layout_marginLeft="5dp"
+            android:textColor="@color/textGrey"/>
+
+        <TextView
+            android:id="@+id/content_tv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/cooking_time_iv"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginBottom="@dimen/activity_vertical_margin"
+            android:textSize="20dp"/>
+
+        <Button
+            android:id="@+id/rate_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/content_tv"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_toLeftOf="@id/center_shim"
+            android:text="Rate"
+            style="@style/PrimaryButton"/>
+
+        <Button
+            android:id="@+id/comment_btn"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/content_tv"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_toRightOf="@id/center_shim"
+            android:text="Comment"
+            style="@style/SubButton"/>
+    </RelativeLayout>
+</ScrollView>

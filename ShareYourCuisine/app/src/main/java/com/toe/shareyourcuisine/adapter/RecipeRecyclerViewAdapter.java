@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.activity.CreateRecipeActivity;
@@ -44,12 +45,14 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
     public static class RecipeViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public ImageView mDisplayImgIV;
         public TextView mTitleTV;
+        public SimpleRatingBar mRatingSRB;
         public TextView mFlavorTV;
         public TextView mTimeTV;
         public RecipeViewHolder(View itemView) {
             super(itemView);
             mDisplayImgIV = (ImageView)itemView.findViewById(R.id.display_img_iv);
             mTitleTV = (TextView)itemView.findViewById(R.id.title_tv);
+            mRatingSRB = (SimpleRatingBar)itemView.findViewById(R.id.rating_srb);
             mFlavorTV = (TextView)itemView.findViewById(R.id.flavor_tv);
             mTimeTV = (TextView)itemView.findViewById(R.id.time_tv);
             itemView.setOnClickListener(this);
@@ -72,6 +75,10 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
     public void onBindViewHolder(RecipeViewHolder holder, int position) {
         Picasso.with(mContext).load(mRecipes.get(position).getDisplayImgUrl()).fit().centerCrop().into(holder.mDisplayImgIV);
         holder.mTitleTV.setText(mRecipes.get(position).getTitle());
+        if(mRecipes.get(position).getRatedUserNumber() == 0)
+            holder.mRatingSRB.setRating(0);
+        else
+            holder.mRatingSRB.setRating(mRecipes.get(position).getTotalRates()/mRecipes.get(position).getRatedUserNumber());
         holder.mFlavorTV.setText(mRecipes.get(position).getFlavorTypes());
         holder.mTimeTV.setText(mRecipes.get(position).getCookingTime());
     }

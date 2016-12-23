@@ -43,7 +43,7 @@ import java.util.List;
  * Created by HQu on 12/4/2016.
  */
 
-public class CreateRecipeActivity extends AppCompatActivity implements RecipeService.CreateNewRecipeListener, Validator.ValidationListener{
+public class CreateRecipeActivity extends BaseActivity implements RecipeService.CreateNewRecipeListener, Validator.ValidationListener{
 
     private static final String TAG = "ToeCRecipeActivity:";
     @NotEmpty
@@ -62,9 +62,6 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
     private Button mSubmitBtn;
     private ArrayList<String> mContentImgUrls;
     private String mDisplayImgUrl;
-    private FirebaseAuth mAuth;
-    private FirebaseAuth.AuthStateListener mAuthListener;
-    private FirebaseUser mUser;
     private MaterialDialog mMaterialDialog;
     private Validator mValidator;
     private String mSelectImgAction;
@@ -75,13 +72,6 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_recipe);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        mAuth = FirebaseAuth.getInstance();
-        mAuthListener = new FirebaseAuth.AuthStateListener() {
-            @Override
-            public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
-                mUser = firebaseAuth.getCurrentUser();
-            }
-        };
         mValidator = new Validator(CreateRecipeActivity.this);
         mValidator.setValidationListener(CreateRecipeActivity.this);
 
@@ -251,9 +241,11 @@ public class CreateRecipeActivity extends AppCompatActivity implements RecipeSer
         recipe.setCookingTime(mCookingTimeSpin.getText().toString());
         recipe.setDisplayImgUrl(mDisplayImgUrl);
         recipe.setContent(mContentET.getText().toString());
-        recipe.setCreatedBy(mUser.getUid());
+        recipe.setCreatedBy(mFirebaseUser.getUid());
         recipe.setCreatedAt(SYCUtils.getCurrentEST());
         recipe.setLastCommentedAt(SYCUtils.getCurrentEST());
+        recipe.setTotalRates(0);
+        recipe.setRatedUserNumber(0);
         RecipeService recipeService = new RecipeService(CreateRecipeActivity.this);
         recipeService.createRecipe(recipe, mContentImgUrls);
         recipeService.setCreateNewRecipeListener(CreateRecipeActivity.this);

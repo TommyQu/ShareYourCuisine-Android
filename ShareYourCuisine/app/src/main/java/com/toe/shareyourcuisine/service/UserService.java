@@ -23,6 +23,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.orm.SugarRecord;
 import com.toe.shareyourcuisine.model.User;
+import com.toe.shareyourcuisine.utils.Constants;
 
 import java.io.File;
 
@@ -39,6 +40,7 @@ public class UserService {
     private Context mContext;
     private SignInListener mSignInListener;
     private RegisterListener mRegisterListener;
+    private GetUserInfoListener mGetUserInfoListener;
     private User mUserToRegister;
 
     public interface SignInListener {
@@ -49,6 +51,11 @@ public class UserService {
     public interface RegisterListener {
         public void registerSucceed();
         public void registerFail(String errorMsg);
+    }
+
+    public interface GetUserInfoListener {
+        public void getUserInfoSucceed(User user);
+        public void getUserInfoFail(String errorMsg);
     }
 
     public UserService(Context context) {
@@ -64,6 +71,10 @@ public class UserService {
         mRegisterListener = registerListener;
     }
 
+    public void setUserInfoListener(GetUserInfoListener getUserInfoListener) {
+        mGetUserInfoListener = getUserInfoListener;
+    }
+
     public void signIn(final String email, String pwd) {
         mAuth.signInWithEmailAndPassword(email, pwd)
                 .addOnCompleteListener((Activity) mContext, new OnCompleteListener<AuthResult>() {
@@ -72,30 +83,49 @@ public class UserService {
                         if (!task.isSuccessful()) {
                             mSignInListener.signInFail(task.getException().getMessage());
                         } else {
-                            getUserInfo(task.getResult().getUser().getUid());
+                            getUserInfo(task.getResult().getUser().getUid(), Constants.ACTION_SIGN_IN);
                         }
                     }
                 });
     }
 
-    public void getUserInfo(String uid) {
+    public void getUserInfo(String uid, String action) {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference userRef = firebaseDatabase.getReference("user");
-        userRef.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                for(DataSnapshot userSnapShot: dataSnapshot.getChildren()) {
-                    User user = userSnapShot.getValue(User.class);
-                    user.save();
+        if(action.equalsIgnoreCase(Constants.ACTION_SIGN_IN)) {
+            userRef.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    for(DataSnapshot userSnapShot: dataSnapshot.getChildren()) {
+                        User user = userSnapShot.getValue(User.class);
+                        user.save();
+                    }
+                    mSignInListener.signInSucceed();
                 }
-                mSignInListener.signInSucceed();
-            }
 
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                mSignInListener.signInFail(databaseError.getMessage());
-            }
-        });
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    mSignInListener.signInFail(databaseError.getMessage());
+                }
+            });
+        } else if(action.equalsIgnoreCase(Constants.ACTION_GET_USER_PROFILE)){
+            userRef.orderByChild("uid").equalTo(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+                @Override
+                public void onDataChange(DataSnapshot dataSnapshot) {
+                    User user = new User();
+                    for(DataSnapshot userSnapShot: dataSnapshot.getChildren()) {
+                        user = userSnapShot.getValue(User.class);
+                    }
+                    mGetUserInfoListener.getUserInfoSucceed(user);
+                }
+
+                @Override
+                public void onCancelled(DatabaseError databaseError) {
+                    mGetUserInfoListener.getUserInfoFail(databaseError.getMessage());
+                }
+            });
+        }
+
     }
 
     public void register(User user, String pwd) {

@@ -32,7 +32,6 @@
         android:layout_marginBottom="3dp"
         app:srb_starSize="15dp"
         app:srb_numberOfStars="5"
-        app:srb_rating="3"
         app:srb_stepSize="0.5"/>
 
     <ImageView
@@ -51,7 +50,6 @@
         android:layout_below="@id/rating_srb"
         android:layout_toRightOf="@id/flavor_iv"
         android:layout_marginLeft="5dp"
-        android:text="Flavor"
         android:textColor="@color/textGrey"/>
 
 

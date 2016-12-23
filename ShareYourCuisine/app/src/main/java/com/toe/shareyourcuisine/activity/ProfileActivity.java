@@ -11,7 +11,7 @@ import com.toe.shareyourcuisine.R;
  * Created by HQu on 11/29/2016.
  */
 
-public class ProfileActivity extends AppCompatActivity {
+public class ProfileActivity extends BaseActivity {
 
     private MaterialEditText mEmailET;
 
