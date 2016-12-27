@@ -6,8 +6,10 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
+import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -39,6 +41,7 @@ public class RecipeService {
     private StorageReference mImgStorageRef;
     private CreateNewRecipeListener mCreateNewRecipeListener;
     private GetAllRecipesListener mGetAllRecipesListener;
+    private RateRecipeListener mRateRecipeListener;
     private Recipe mRecipeToCreate;
     private Context mContext;
 
@@ -52,12 +55,21 @@ public class RecipeService {
         public void getAllRecipesFail(String errorMsg);
     }
 
+    public interface RateRecipeListener {
+        public void rateRecipeSucceed();
+        public void rateRecipeFail(String errorMsg);
+    }
+
     public void setCreateNewRecipeListener(CreateNewRecipeListener createNewRecipeListener) {
         mCreateNewRecipeListener = createNewRecipeListener;
     }
 
     public void setGetAllRecipesListener(GetAllRecipesListener getAllRecipesListener) {
         mGetAllRecipesListener = getAllRecipesListener;
+    }
+
+    public void setRateRecipeListener(RateRecipeListener rateRecipeListener) {
+        mRateRecipeListener = rateRecipeListener;
     }
 
     public RecipeService(Context context) {
@@ -153,4 +165,36 @@ public class RecipeService {
             }
         });
     }
+
+    public void rateRecipe(final String recipeId, final String userId, final float newRate) {
+        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
+        final DatabaseReference recipeRef = firebaseDatabase.getReference("recipe");
+//        Get current recipe rated users and rate value
+        recipeRef.orderByKey().equalTo(recipeId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Recipe recipe = new Recipe();
+                for(DataSnapshot recipeSnapshot: dataSnapshot.getChildren()) {
+                    recipe = recipeSnapshot.getValue(Recipe.class);
+                }
+                recipe.getRatedBy().add(userId);
+                recipe.setTotalRates(recipe.getTotalRates()+newRate);
+                recipeRef.child(recipeId).child("ratedBy").setValue(recipe.getRatedBy());
+                recipeRef.child(recipeId).child("totalRates").setValue(recipe.getTotalRates()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        mRateRecipeListener.rateRecipeSucceed();
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mRateRecipeListener.rateRecipeFail(databaseError.getMessage());
+            }
+        });
+
+    }
+
+
 }

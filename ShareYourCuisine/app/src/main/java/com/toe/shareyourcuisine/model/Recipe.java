@@ -28,11 +28,12 @@ public class Recipe {
     private String createdBy;
     private Long lastCommentedAt;
     private String flavorTypes;
-    private int totalRates;
-    private int ratedUserNumber;
+    private float totalRates;
+    private ArrayList<String> ratedBy;
 
     public Recipe() {
         contentImgUrls = new ArrayList<String>();
+        ratedBy = new ArrayList<String>();
     }
 
     public String getUid() {
@@ -115,19 +116,19 @@ public class Recipe {
         this.flavorTypes = flavorTypes;
     }
 
-    public int getTotalRates() {
+    public float getTotalRates() {
         return totalRates;
     }
 
-    public void setTotalRates(int totalRates) {
+    public void setTotalRates(float totalRates) {
         this.totalRates = totalRates;
     }
 
-    public int getRatedUserNumber() {
-        return ratedUserNumber;
+    public ArrayList<String> getRatedBy() {
+        return ratedBy;
     }
 
-    public void setRatedUserNumber(int ratedUserNumber) {
-        this.ratedUserNumber = ratedUserNumber;
+    public void setRatedBy(ArrayList<String> ratedBy) {
+        this.ratedBy = ratedBy;
     }
 }

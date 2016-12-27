@@ -32,7 +32,7 @@
         android:layout_below="@id/pwd_et"
         android:layout_marginTop="32dp"
         android:background="@color/colorRed"
-        android:textColor="@color/colorWhite"
+        android:textColor="@color/white"
         android:text="Sign In"/>
 
     <Button
@@ -41,7 +41,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/submit_btn"
         android:layout_marginTop="32dp"
-        android:background="@color/colorWhite"
+        android:background="@color/white"
         android:textColor="@color/colorRed"
         android:text="Register"/>
 

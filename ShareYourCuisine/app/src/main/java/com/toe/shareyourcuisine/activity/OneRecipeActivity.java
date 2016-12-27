@@ -1,9 +1,7 @@
 package com.toe.shareyourcuisine.activity;
 
-import android.media.Image;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,14 +13,14 @@ import android.widget.Toast;
 import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
+import com.toe.shareyourcuisine.libs.RatingDialog;
 import com.toe.shareyourcuisine.model.Recipe;
 import com.toe.shareyourcuisine.model.User;
+import com.toe.shareyourcuisine.service.RecipeService;
 import com.toe.shareyourcuisine.service.UserService;
 import com.toe.shareyourcuisine.utils.Constants;
 
 import org.parceler.Parcels;
-
-import java.io.File;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
@@ -30,7 +28,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by HQu on 12/19/2016.
  */
 
-public class OneRecipeActivity extends BaseActivity implements UserService.GetUserInfoListener{
+public class OneRecipeActivity extends BaseActivity implements UserService.GetUserInfoListener, RecipeService.RateRecipeListener {
 
     private ImageView mDisplayImgIV;
     private CircleImageView mCreatedUserAvatarIV;
@@ -49,7 +47,7 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
         super.onCreate(savedInstanceState);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_one_recipe);
-        Recipe recipe = Parcels.unwrap(getIntent().getParcelableExtra("recipe"));
+        final Recipe recipe = Parcels.unwrap(getIntent().getParcelableExtra("recipe"));
 
         mDisplayImgIV = (ImageView)findViewById(R.id.display_img_iv);
         mCreatedUserAvatarIV = (CircleImageView) findViewById(R.id.created_user_avatar_iv);
@@ -65,10 +63,10 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
         Picasso.with(OneRecipeActivity.this).load(recipe.getDisplayImgUrl()).fit().centerCrop().into(mDisplayImgIV);
         mFlavorTV.setText(recipe.getFlavorTypes());
         mTitleTV.setText(recipe.getTitle());
-        if(recipe.getRatedUserNumber() == 0)
+        if(recipe.getRatedBy().size() == 0)
             mRatingSRB.setRating(0);
         else
-            mRatingSRB.setRating(recipe.getTotalRates()/recipe.getRatedUserNumber());
+            mRatingSRB.setRating(recipe.getTotalRates()/recipe.getRatedBy().size());
         mCookingTimeTV.setText(recipe.getCookingTime());
         mContentTV.setText(recipe.getContent());
 
@@ -76,7 +74,33 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
             @Override
             public void onClick(View v) {
                 if(mAuth.getCurrentUser() != null) {
+                    RatingDialog ratingDialog = new RatingDialog.Builder(OneRecipeActivity.this)
+//                            .icon(drawable)
+                            .threshold(3)
+                            .title("How do you like this?")
+                            .titleTextColor(R.color.textGrey)
+                            .positiveButtonText("Confirm")
+                            .negativeButtonText("Cancel")
+                            .positiveButtonTextColor(R.color.colorRed)
+                            .negativeButtonTextColor(R.color.colorRed)
+                            .ratingBarColor(R.color.golden_stars)
+//                            .positiveButtonBackgroundColor(R.color.colorRed)
+//                            .negativeButtonBackgroundColor(R.color.white)
+                            .onRatingSubmit(new RatingDialog.RatingSubmitListener() {
+                                @Override
+                                public void onRatingSubmit(float rating, boolean thresholdCleared) {
+                                    if(recipe.getRatedBy().contains(mAuth.getCurrentUser().getUid()))
+                                        Toast.makeText(OneRecipeActivity.this, "You have already rated this recipe", Toast.LENGTH_LONG).show();
+                                    else {
+                                        recipe.getRatedBy().add(mAuth.getCurrentUser().getUid());
+                                        RecipeService recipeService = new RecipeService(OneRecipeActivity.this);
+                                        recipeService.setRateRecipeListener(OneRecipeActivity.this);
+                                        recipeService.rateRecipe(recipe.getUid(), mAuth.getCurrentUser().getUid(), rating);
+                                    }
+                                }
+                            }).build();
 
+                    ratingDialog.show();
                 } else {
                     Toast.makeText(OneRecipeActivity.this, "Please log in!", Toast.LENGTH_SHORT).show();
                 }
@@ -117,6 +141,16 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
 
     @Override
     public void getUserInfoFail(String errorMsg) {
+        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void rateRecipeSucceed() {
+        Toast.makeText(this, "Rate successfully!", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void rateRecipeFail(String errorMsg) {
         Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
     }
 }

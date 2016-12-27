@@ -75,10 +75,10 @@ public class RecipeRecyclerViewAdapter extends RecyclerView.Adapter<RecipeRecycl
     public void onBindViewHolder(RecipeViewHolder holder, int position) {
         Picasso.with(mContext).load(mRecipes.get(position).getDisplayImgUrl()).fit().centerCrop().into(holder.mDisplayImgIV);
         holder.mTitleTV.setText(mRecipes.get(position).getTitle());
-        if(mRecipes.get(position).getRatedUserNumber() == 0)
+        if(mRecipes.get(position).getRatedBy().size() == 0)
             holder.mRatingSRB.setRating(0);
         else
-            holder.mRatingSRB.setRating(mRecipes.get(position).getTotalRates()/mRecipes.get(position).getRatedUserNumber());
+            holder.mRatingSRB.setRating(mRecipes.get(position).getTotalRates()/mRecipes.get(position).getRatedBy().size());
         holder.mFlavorTV.setText(mRecipes.get(position).getFlavorTypes());
         holder.mTimeTV.setText(mRecipes.get(position).getCookingTime());
     }

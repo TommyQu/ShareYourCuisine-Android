@@ -44,6 +44,9 @@
         <activity android:name=".activity.OneRecipeActivity"
                   android:label="One Recipe">
         </activity>
+        <activity android:name=".activity.CreatePostActivity"
+                  android:label="Create Post">
+        </activity>
     </application>
 
 </manifest>
