@@ -1,5 +1,7 @@
 package com.toe.shareyourcuisine.activity;
 
+import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
@@ -14,25 +16,31 @@ import com.mobsandgeeks.saripaar.ValidationError;
 import com.mobsandgeeks.saripaar.Validator;
 import com.mobsandgeeks.saripaar.annotation.NotEmpty;
 import com.rengwuxian.materialedittext.MaterialEditText;
+import com.sangcomz.fishbun.FishBun;
+import com.sangcomz.fishbun.define.Define;
+import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.model.Post;
 import com.toe.shareyourcuisine.service.PostService;
 import com.toe.shareyourcuisine.utils.SYCUtils;
 
+import java.io.File;
 import java.util.List;
 
 /**
  * Created by HQu on 12/27/2016.
  */
 
-public class CreatePostActivity extends BaseActivity implements Validator.ValidationListener {
+public class CreatePostActivity extends BaseActivity implements Validator.ValidationListener, PostService.CreatePostListener {
 
     @NotEmpty
     private MaterialEditText mContentET;
     private ImageView mImgIV;
+    private Button mSelectImgBtn;
     private Button mSubmitBtn;
     private Validator mValidator;
     private MaterialDialog mMaterialDialog;
+    private String mImgUrl;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -44,7 +52,19 @@ public class CreatePostActivity extends BaseActivity implements Validator.Valida
 
         mContentET = (MaterialEditText)findViewById(R.id.content_et);
         mImgIV = (ImageView)findViewById(R.id.img_iv);
+        mSelectImgBtn = (Button)findViewById(R.id.select_img_btn);
         mSubmitBtn = (Button)findViewById(R.id.submit_btn);
+
+        mSelectImgBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                FishBun.with(CreatePostActivity.this)
+                        .setActionBarColor(Color.rgb(211, 47, 47), Color.rgb(211, 47, 47))
+                        .setPickerCount(1)
+                        .setCamera(true)
+                        .startAlbum();
+            }
+        });
 
         mSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -75,7 +95,10 @@ public class CreatePostActivity extends BaseActivity implements Validator.Valida
         post.setContent(mContentET.getText().toString());
         post.setCreatedBy(mAuth.getCurrentUser().getUid());
         post.setCreatedAt(SYCUtils.getCurrentEST());
-        PostService postService = new PostService();
+        post.setImgUrl(mImgUrl);
+        PostService postService = new PostService(CreatePostActivity.this);
+        postService.setCreatePostListener(CreatePostActivity.this);
+        postService.createPost(post);
     }
 
     @Override
@@ -91,5 +114,32 @@ public class CreatePostActivity extends BaseActivity implements Validator.Valida
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        switch (requestCode) {
+            case Define.ALBUM_REQUEST_CODE:
+                if (resultCode == RESULT_OK) {
+                    mImgIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
+                    mImgIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
+                    mImgUrl = data.getStringArrayListExtra(Define.INTENT_PATH).get(0);
+                    Picasso.with(CreatePostActivity.this).load(new File(mImgUrl)).fit().centerCrop().into(mImgIV);
+                }
+        }
+    }
+
+    @Override
+    public void createPostSucceed() {
+        mMaterialDialog.dismiss();
+        Toast.makeText(this, "Create post successfully!", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    @Override
+    public void createPostFail(String errorMsg) {
+        mMaterialDialog.dismiss();
+        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
     }
 }

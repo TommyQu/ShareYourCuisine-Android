@@ -109,7 +109,7 @@ public class RecipeService {
     public void uploadDisplayImg(String displayImgUrl, String uid) {
         File compressedImg = new Compressor.Builder(mContext).build().compressToFile(new File(displayImgUrl));
         Uri file = Uri.fromFile(compressedImg);
-        mImgStorageRef = mStorageRef.child("images/" + uid + "/" + UUID.randomUUID().toString());
+        mImgStorageRef = mStorageRef.child("images/recipe/" + uid + "/" + UUID.randomUUID().toString());
         UploadTask uploadTask = mImgStorageRef.putFile(file);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -132,7 +132,7 @@ public class RecipeService {
             final int finalIndex = i;
             File compressedImg = new Compressor.Builder(mContext).build().compressToFile(new File(contentImgUrls.get(i)));
             Uri file = Uri.fromFile(compressedImg);
-            mImgStorageRef = mStorageRef.child("images/" + uid + "/" + UUID.randomUUID().toString());
+            mImgStorageRef = mStorageRef.child("images/recipe/" + uid + "/" + UUID.randomUUID().toString());
             UploadTask uploadTask = mImgStorageRef.putFile(file);
             uploadTask.addOnFailureListener(new OnFailureListener() {
                 @Override
@@ -146,13 +146,13 @@ public class RecipeService {
                     Uri downloadUrl = taskSnapshot.getDownloadUrl();
                     mRecipeToCreate.getContentImgUrls().add(downloadUrl.toString());
                     if(finalIndex == imgCount - 1)
-                        insertMenuData();
+                        insertRecipeData();
                 }
             });
         }
     }
 
-    public void insertMenuData() {
+    public void insertRecipeData() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference recipeRef = firebaseDatabase.getReference("recipe");
         recipeRef.push().setValue(mRecipeToCreate, new DatabaseReference.CompletionListener() {

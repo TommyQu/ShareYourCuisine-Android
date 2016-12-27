@@ -246,8 +246,8 @@ public class CreateRecipeActivity extends BaseActivity implements RecipeService.
         recipe.setLastCommentedAt(SYCUtils.getCurrentEST());
         recipe.setTotalRates(0);
         RecipeService recipeService = new RecipeService(CreateRecipeActivity.this);
-        recipeService.createRecipe(recipe, mContentImgUrls);
         recipeService.setCreateNewRecipeListener(CreateRecipeActivity.this);
+        recipeService.createRecipe(recipe, mContentImgUrls);
     }
 
     @Override
