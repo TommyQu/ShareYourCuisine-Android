@@ -170,7 +170,7 @@ public class UserService {
     public void createUser() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference userRef = firebaseDatabase.getReference("user");
-        userRef.push().setValue(mUserToRegister, new DatabaseReference.CompletionListener() {
+        userRef.child(mUserToRegister.getUid()).setValue(mUserToRegister, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if(databaseError != null)

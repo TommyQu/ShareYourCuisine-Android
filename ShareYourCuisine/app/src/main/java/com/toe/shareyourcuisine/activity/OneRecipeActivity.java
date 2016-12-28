@@ -3,10 +3,12 @@ package com.toe.shareyourcuisine.activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,6 +24,8 @@ import com.toe.shareyourcuisine.utils.Constants;
 
 import org.parceler.Parcels;
 
+import java.io.File;
+
 import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
@@ -36,8 +40,12 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
     private TextView mFlavorTV;
     private TextView mTitleTV;
     private SimpleRatingBar mRatingSRB;
+    private TextView mRatedUsersNumTV;
     private TextView mCookingTimeTV;
     private TextView mContentTV;
+    private ImageView mSelectedImageIV;
+    private LinearLayout mContentImgLayout;
+    private LayoutInflater mContentImgLayoutInflater;
     private Button mRateBtn;
     private Button mCommentBtn;
 
@@ -55,11 +63,16 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
         mFlavorTV = (TextView)findViewById(R.id.flavor_tv);
         mTitleTV = (TextView)findViewById(R.id.title_tv);
         mRatingSRB = (SimpleRatingBar)findViewById(R.id.rating_srb);
+        mRatedUsersNumTV = (TextView)findViewById(R.id.rated_users_num_tv);
         mCookingTimeTV = (TextView)findViewById(R.id.cooking_time_tv);
         mContentTV = (TextView)findViewById(R.id.content_tv);
+        mSelectedImageIV = (ImageView)findViewById(R.id.selected_img_iv);
+        mContentImgLayout = (LinearLayout)findViewById(R.id.content_img_layout);
+        mContentImgLayoutInflater = LayoutInflater.from(OneRecipeActivity.this);
         mRateBtn = (Button)findViewById(R.id.rate_btn);
         mCommentBtn = (Button)findViewById(R.id.comment_btn);
 
+//        Display recipe data
         Picasso.with(OneRecipeActivity.this).load(recipe.getDisplayImgUrl()).fit().centerCrop().into(mDisplayImgIV);
         mFlavorTV.setText(recipe.getFlavorTypes());
         mTitleTV.setText(recipe.getTitle());
@@ -67,8 +80,26 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
             mRatingSRB.setRating(0);
         else
             mRatingSRB.setRating(recipe.getTotalRates()/recipe.getRatedBy().size());
+        mRatedUsersNumTV.setText(recipe.getRatedBy().size() + " rated this recipe");
         mCookingTimeTV.setText(recipe.getCookingTime());
         mContentTV.setText(recipe.getContent());
+        mSelectedImageIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
+        mSelectedImageIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
+        Picasso.with(OneRecipeActivity.this).load(recipe.getContentImgUrls().get(0)).fit().centerCrop().into(mSelectedImageIV);
+        for(int i = 0; i < recipe.getContentImgUrls().size(); i++) {
+            View view = mContentImgLayoutInflater.inflate(R.layout.content_img_item, mContentImgLayout, false);
+            ImageView iv = (ImageView) view.findViewById(R.id.content_img);
+            final String imgUrl = recipe.getContentImgUrls().get(i);
+            Picasso.with(OneRecipeActivity.this).load(imgUrl).fit().centerCrop().into(iv);
+            iv.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Picasso.with(OneRecipeActivity.this).load(imgUrl).fit().centerCrop().into(mSelectedImageIV);
+                }
+            });
+            mContentImgLayout.addView(view);
+        }
+
 
         mRateBtn.setOnClickListener(new View.OnClickListener() {
             @Override

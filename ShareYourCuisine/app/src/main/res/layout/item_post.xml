@@ -17,10 +17,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/avatar_iv"
-        android:layout_marginTop="-5dp"
+        android:layout_marginTop="5dp"
         android:layout_marginLeft="20dp"
         android:layout_marginBottom="3dp"
-        style="@style/ItemRecipeTitle"
+        android:textColor="@color/deepBlue"
         android:text="Title"/>
 
     <TextView
@@ -34,11 +34,20 @@
 
     <ImageView
         android:id="@+id/img_iv"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_width="150dp"
+        android:layout_height="150dp"
         android:layout_below="@id/content_tv"
         android:layout_toRightOf="@id/avatar_iv"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="10dp"
         android:src="@drawable/avatar"/>
+
+    <View
+        android:id="@+id/divider"
+        android:layout_below="@id/img_iv"
+        android:layout_width="match_parent"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_height="1dp"
+        android:background="@color/dividerGrey" />
 
 </RelativeLayout>

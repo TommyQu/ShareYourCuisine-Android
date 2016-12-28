@@ -3,6 +3,7 @@ package com.toe.shareyourcuisine.service;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -15,7 +16,9 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.toe.shareyourcuisine.model.Post;
+import com.toe.shareyourcuisine.model.PostItem;
 import com.toe.shareyourcuisine.model.Recipe;
+import com.toe.shareyourcuisine.model.User;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -35,7 +38,7 @@ public class PostService {
     private StorageReference mStorageRef;
     private StorageReference mImgStorageRef;
     private CreatePostListener mCreatePostListener;
-    private GetAllPostsListener mGetAllPostsListener;
+    private GetAllPostItemsListener mGetAllPostItemsListener;
     private Context mContext;
     private Post mPostToCreate;
 
@@ -44,9 +47,9 @@ public class PostService {
         public void createPostFail(String errorMsg);
     }
 
-    public interface GetAllPostsListener {
-        public void getAllPostsSucceed(List<Post> posts);
-        public void getAllPostsFail(String errorMsg);
+    public interface GetAllPostItemsListener {
+        public void getAllPostItemsSucceed(List<PostItem> postItems);
+        public void getAllPostItemsFail(String errorMsg);
     }
 
     public PostService(Context context) {
@@ -57,8 +60,8 @@ public class PostService {
         mCreatePostListener = createPostListener;
     }
 
-    public void setGetAllPostsListener(GetAllPostsListener getAllPostsListener) {
-        mGetAllPostsListener = getAllPostsListener;
+    public void setGetAllPostItemsListener(GetAllPostItemsListener getAllPostItemsListener) {
+        mGetAllPostItemsListener = getAllPostItemsListener;
     }
 
     public void createPost(Post post) {
@@ -106,24 +109,38 @@ public class PostService {
         });
     }
 
-    public void getAllPosts() {
+    public void getAllPostItems() {
         FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
         DatabaseReference postRef = firebaseDatabase.getReference("post");
+        final DatabaseReference userRef = firebaseDatabase.getReference("user");
         postRef.orderByChild("createdAt").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Post> posts = new ArrayList<Post>();
+                final List<PostItem> postItems = new ArrayList<PostItem>();
                 for(DataSnapshot postSnapShot: dataSnapshot.getChildren()) {
-                    Post post = postSnapShot.getValue(Post.class);
-                    post.setUid(postSnapShot.getKey());
-                    posts.add(post);
+                    final PostItem postItem = postSnapShot.getValue(PostItem.class);
+                    postItem.setUid(postSnapShot.getKey());
+                    userRef.child(postItem.getCreatedBy()).addListenerForSingleValueEvent(new ValueEventListener() {
+                        @Override
+                        public void onDataChange(DataSnapshot dataSnapshot) {
+                            User user = dataSnapshot.getValue(User.class);
+                            postItem.setCreatedUserName(user.getfName() + " " + user.getlName());
+                            postItem.setCreatedUserAvatarUrl(user.getAvatarUrl());
+                            postItems.add(postItem);
+                        }
+
+                        @Override
+                        public void onCancelled(DatabaseError databaseError) {
+                            mGetAllPostItemsListener.getAllPostItemsFail(databaseError.getMessage());
+                        }
+                    });
                 }
-                mGetAllPostsListener.getAllPostsSucceed(posts);
+                mGetAllPostItemsListener.getAllPostItemsSucceed(postItems);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                mGetAllPostsListener.getAllPostsFail(databaseError.getMessage());
+                mGetAllPostItemsListener.getAllPostItemsFail(databaseError.getMessage());
             }
         });
     }

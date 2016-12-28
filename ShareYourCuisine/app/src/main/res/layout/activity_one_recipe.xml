@@ -34,9 +34,18 @@
             android:layout_below="@id/title_tv"
             android:layout_toLeftOf="@id/center_shim"
             android:layout_marginTop="@dimen/activity_vertical_margin"
+            app:srb_isIndicator="true"
             app:srb_starSize="20dp"
             app:srb_numberOfStars="5"
             app:srb_stepSize="0.5"/>
+
+        <TextView
+            android:id="@+id/rated_users_num_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/title_tv"
+            android:layout_toRightOf="@id/center_shim"
+            android:layout_marginTop="@dimen/activity_vertical_margin"/>
 
         <de.hdodenhof.circleimageview.CircleImageView
             android:id="@+id/created_user_avatar_iv"
@@ -104,11 +113,34 @@
             android:layout_marginBottom="@dimen/activity_vertical_margin"
             android:textSize="20dp"/>
 
+        <ImageView
+            android:id="@+id/selected_img_iv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/content_tv"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_centerHorizontal="true"/>
+
+        <HorizontalScrollView
+            android:id="@+id/content_img_hsv"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/selected_img_iv">
+
+            <LinearLayout
+                android:id="@+id/content_img_layout"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical"
+                android:orientation="horizontal">
+            </LinearLayout>
+        </HorizontalScrollView>
+
         <Button
             android:id="@+id/rate_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/content_tv"
+            android:layout_below="@id/content_img_hsv"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_toLeftOf="@id/center_shim"
@@ -119,7 +151,7 @@
             android:id="@+id/comment_btn"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@id/content_tv"
+            android:layout_below="@id/content_img_hsv"
             android:layout_marginTop="@dimen/activity_vertical_margin"
             android:layout_marginRight="@dimen/activity_horizontal_margin"
             android:layout_toRightOf="@id/center_shim"

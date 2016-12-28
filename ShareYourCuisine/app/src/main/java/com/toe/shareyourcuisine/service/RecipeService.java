@@ -24,6 +24,7 @@ import com.toe.shareyourcuisine.utils.SYCUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -88,6 +89,7 @@ public class RecipeService {
                     recipe.setUid(recipeSnapShot.getKey());
                     recipes.add(recipe);
                 }
+                Collections.reverse(recipes);
                 mGetAllRecipesListener.getAllRecipesSucceed(recipes);
             }
 

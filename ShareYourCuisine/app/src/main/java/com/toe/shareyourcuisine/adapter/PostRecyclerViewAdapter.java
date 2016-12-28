@@ -12,6 +12,7 @@ import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.model.Post;
+import com.toe.shareyourcuisine.model.PostItem;
 import com.toe.shareyourcuisine.model.Recipe;
 
 import java.util.List;
@@ -25,12 +26,12 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PostRecyclerViewAdapter extends RecyclerView.Adapter<PostRecyclerViewAdapter.PostViewHolder> {
 
     private Context mContext;
-    private List<Post> mPosts;
+    private List<PostItem> mPostItems;
     private static PostItemClickListener mPostItemClickListener;
 
-    public PostRecyclerViewAdapter(Context context, List<Post> posts) {
+    public PostRecyclerViewAdapter(Context context, List<PostItem> postItems) {
         mContext = context;
-        mPosts = posts;
+        mPostItems = postItems;
     }
 
     public interface PostItemClickListener {
@@ -70,13 +71,15 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter<PostRecyclerVi
 
     @Override
     public void onBindViewHolder(PostViewHolder holder, int position) {
-        Picasso.with(mContext).load(mPosts.get(position).getImgUrl()).fit().centerCrop().into(holder.mImgIV);
-        holder.mContentTV.setText(mPosts.get(position).getContent());
+        Picasso.with(mContext).load(mPostItems.get(position).getImgUrl()).fit().centerCrop().into(holder.mImgIV);
+        holder.mNameTV.setText(mPostItems.get(position).getCreatedUserName());
+        holder.mContentTV.setText(mPostItems.get(position).getContent());
+        Picasso.with(mContext).load(mPostItems.get(position).getCreatedUserAvatarUrl()).fit().centerCrop().into(holder.mAvatarIV);
     }
 
     @Override
     public int getItemCount() {
-        return mPosts.size();
+        return mPostItems.size();
     }
 
 
