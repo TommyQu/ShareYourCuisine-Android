@@ -131,4 +131,5 @@ public class Recipe {
     public void setRatedBy(ArrayList<String> ratedBy) {
         this.ratedBy = ratedBy;
     }
+
 }

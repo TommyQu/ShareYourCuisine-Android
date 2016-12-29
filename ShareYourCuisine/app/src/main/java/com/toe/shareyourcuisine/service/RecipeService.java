@@ -18,6 +18,7 @@ import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.toe.shareyourcuisine.model.Comment;
 import com.toe.shareyourcuisine.model.Recipe;
 import com.toe.shareyourcuisine.model.User;
 import com.toe.shareyourcuisine.utils.SYCUtils;
@@ -40,6 +41,8 @@ public class RecipeService {
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mStorageRef;
     private StorageReference mImgStorageRef;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mRecipeRef;
     private CreateNewRecipeListener mCreateNewRecipeListener;
     private GetAllRecipesListener mGetAllRecipesListener;
     private RateRecipeListener mRateRecipeListener;
@@ -75,12 +78,13 @@ public class RecipeService {
 
     public RecipeService(Context context) {
         mContext = context;
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mRecipeRef = mFirebaseDatabase.getReference("recipe");
     }
 
     public void getAllRecipes() {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference recipeRef = firebaseDatabase.getReference("recipe");
-        recipeRef.orderByChild("createdAt").addListenerForSingleValueEvent(new ValueEventListener() {
+
+        mRecipeRef.orderByChild("createdAt").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Recipe> recipes = new ArrayList<Recipe>();
@@ -155,9 +159,7 @@ public class RecipeService {
     }
 
     public void insertRecipeData() {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference recipeRef = firebaseDatabase.getReference("recipe");
-        recipeRef.push().setValue(mRecipeToCreate, new DatabaseReference.CompletionListener() {
+        mRecipeRef.push().setValue(mRecipeToCreate, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if(databaseError != null)
@@ -169,20 +171,15 @@ public class RecipeService {
     }
 
     public void rateRecipe(final String recipeId, final String userId, final float newRate) {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        final DatabaseReference recipeRef = firebaseDatabase.getReference("recipe");
 //        Get current recipe rated users and rate value
-        recipeRef.orderByKey().equalTo(recipeId).addListenerForSingleValueEvent(new ValueEventListener() {
+        mRecipeRef.child(recipeId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                Recipe recipe = new Recipe();
-                for(DataSnapshot recipeSnapshot: dataSnapshot.getChildren()) {
-                    recipe = recipeSnapshot.getValue(Recipe.class);
-                }
+                Recipe recipe = dataSnapshot.getValue(Recipe.class);
                 recipe.getRatedBy().add(userId);
                 recipe.setTotalRates(recipe.getTotalRates()+newRate);
-                recipeRef.child(recipeId).child("ratedBy").setValue(recipe.getRatedBy());
-                recipeRef.child(recipeId).child("totalRates").setValue(recipe.getTotalRates()).addOnCompleteListener(new OnCompleteListener<Void>() {
+                mRecipeRef.child(recipeId).child("ratedBy").setValue(recipe.getRatedBy());
+                mRecipeRef.child(recipeId).child("totalRates").setValue(recipe.getTotalRates()).addOnCompleteListener(new OnCompleteListener<Void>() {
                     @Override
                     public void onComplete(@NonNull Task<Void> task) {
                         mRateRecipeListener.rateRecipeSucceed();
