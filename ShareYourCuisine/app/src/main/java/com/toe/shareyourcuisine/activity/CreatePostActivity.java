@@ -96,6 +96,7 @@ public class CreatePostActivity extends BaseActivity implements Validator.Valida
         post.setCreatedBy(mAuth.getCurrentUser().getUid());
         post.setCreatedAt(SYCUtils.getCurrentEST());
         post.setImgUrl(mImgUrl);
+        post.setTotalLikes(0);
         PostService postService = new PostService(CreatePostActivity.this);
         postService.setCreatePostListener(CreatePostActivity.this);
         postService.createPost(post);

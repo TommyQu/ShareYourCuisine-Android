@@ -19,6 +19,7 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
+import com.toe.shareyourcuisine.fragment.EventFragment;
 import com.toe.shareyourcuisine.fragment.HomeFragment;
 import com.toe.shareyourcuisine.fragment.PostFragment;
 import com.toe.shareyourcuisine.fragment.RecipeFragment;
@@ -164,6 +165,7 @@ public class MainActivity extends BaseActivity
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new PostFragment()).commit();
             setTitle(item.getTitle());
         } else if (id == R.id.nav_events) {
+            getSupportFragmentManager().beginTransaction().replace(R.id.content, new EventFragment()).commit();
             setTitle(item.getTitle());
         } else if (id == R.id.nav_sign_in) {
             Intent intent = new Intent(MainActivity.this, SignInActivity.class);

@@ -8,19 +8,17 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent">
         <android.support.v4.widget.SwipeRefreshLayout
-            android:id="@+id/recipe_srl"
+            android:id="@+id/event_srl"
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-
             <android.support.v7.widget.RecyclerView
-                android:id="@+id/recipe_rv"
+                android:id="@+id/event_rv"
                 android:scrollbars="none"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"/>
-
         </android.support.v4.widget.SwipeRefreshLayout>
         <android.support.design.widget.FloatingActionButton
-            android:id="@+id/create_recipe_fab"
+            android:id="@+id/create_event_fab"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentRight="true"
