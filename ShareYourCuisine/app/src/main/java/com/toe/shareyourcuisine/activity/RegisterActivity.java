@@ -10,6 +10,7 @@ import android.text.TextWatcher;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -141,9 +142,11 @@ public class RegisterActivity extends AppCompatActivity implements UserService.R
         switch (requestCode) {
             case Define.ALBUM_REQUEST_CODE:
                 if(resultCode == RESULT_OK) {
+                    ViewGroup.LayoutParams params = mAvatarCIV.getLayoutParams();
+                    params.width = (int) getResources().getDimension(R.dimen.avatar_dimen);
+                    params.height = (int) getResources().getDimension(R.dimen.avatar_dimen);
+                    mAvatarCIV.setLayoutParams(params);
                     mUser.setAvatarUrl(data.getStringArrayListExtra(Define.INTENT_PATH).get(0));
-                    mAvatarCIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.avatar_dimen);
-                    mAvatarCIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.avatar_dimen);
                     Picasso.with(RegisterActivity.this).load(new File(mUser.getAvatarUrl())).fit().centerCrop().into(mAvatarCIV);
                 }
         }

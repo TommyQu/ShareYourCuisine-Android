@@ -38,14 +38,20 @@
             android:name=".activity.ProfileActivity"
             android:label="Profile" >
         </activity>
+
         <activity android:name=".activity.CreateRecipeActivity"
             android:label="Create Recipe">
         </activity>
         <activity android:name=".activity.OneRecipeActivity"
                   android:label="One Recipe">
         </activity>
+
         <activity android:name=".activity.CreatePostActivity"
                   android:label="Create Post">
+        </activity>
+
+        <activity android:name=".activity.CreateEventActivity"
+                  android:label="Create Event">
         </activity>
     </application>
 

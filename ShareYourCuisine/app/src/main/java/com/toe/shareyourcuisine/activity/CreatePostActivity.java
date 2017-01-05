@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
@@ -123,8 +124,10 @@ public class CreatePostActivity extends BaseActivity implements Validator.Valida
         switch (requestCode) {
             case Define.ALBUM_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
-                    mImgIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
-                    mImgIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
+                    ViewGroup.LayoutParams params = mImgIV.getLayoutParams();
+                    params.width = (int) getResources().getDimension(R.dimen.img_dimen);
+                    params.height = (int) getResources().getDimension(R.dimen.img_dimen);
+                    mImgIV.setLayoutParams(params);
                     mImgUrl = data.getStringArrayListExtra(Define.INTENT_PATH).get(0);
                     Picasso.with(CreatePostActivity.this).load(new File(mImgUrl)).fit().centerCrop().into(mImgIV);
                 }

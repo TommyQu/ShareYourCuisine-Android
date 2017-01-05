@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -190,8 +191,10 @@ public class CreateRecipeActivity extends BaseActivity implements RecipeService.
             case Define.ALBUM_REQUEST_CODE:
                 if(resultCode == RESULT_OK) {
                     if(mSelectImgAction.equalsIgnoreCase("content")) {
-                        mSelectedImageIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
-                        mSelectedImageIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
+                        ViewGroup.LayoutParams params = mSelectedImageIV.getLayoutParams();
+                        params.width = (int) getResources().getDimension(R.dimen.img_dimen);
+                        params.height = (int) getResources().getDimension(R.dimen.img_dimen);
+                        mSelectedImageIV.setLayoutParams(params);
                         mContentImgLayout.removeAllViews();
                         mContentImgUrls = data.getStringArrayListExtra(Define.INTENT_PATH);
                         //Initiate first image as default selected
@@ -210,8 +213,10 @@ public class CreateRecipeActivity extends BaseActivity implements RecipeService.
                             mContentImgLayout.addView(view);
                         }
                     } else {
-                        mDisplayImgIV.getLayoutParams().width = (int) getResources().getDimension(R.dimen.img_dimen);
-                        mDisplayImgIV.getLayoutParams().height = (int) getResources().getDimension(R.dimen.img_dimen);
+                        ViewGroup.LayoutParams params = mDisplayImgIV.getLayoutParams();
+                        params.width = (int) getResources().getDimension(R.dimen.img_dimen);
+                        params.height = (int) getResources().getDimension(R.dimen.img_dimen);
+                        mDisplayImgIV.setLayoutParams(params);
                         mDisplayImgUrl = data.getStringArrayListExtra(Define.INTENT_PATH).get(0);
                         Picasso.with(CreateRecipeActivity.this).load(new File(mDisplayImgUrl)).fit().centerCrop().into(mDisplayImgIV);
                 }

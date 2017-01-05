@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.toe.shareyourcuisine.R;
+import com.toe.shareyourcuisine.activity.CreateEventActivity;
 import com.toe.shareyourcuisine.activity.CreatePostActivity;
 import com.toe.shareyourcuisine.activity.MainActivity;
 import com.toe.shareyourcuisine.adapter.PostRecyclerViewAdapter;
@@ -48,7 +49,8 @@ public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefr
             @Override
             public void onClick(View view) {
                 if(((MainActivity)getActivity()).getAuth().getCurrentUser() != null) {
-
+                    Intent intent = new Intent(getActivity(), CreateEventActivity.class);
+                    startActivity(intent);
                 } else {
                     Toast.makeText(getActivity(), "Please log in!", Toast.LENGTH_SHORT).show();
                 }
