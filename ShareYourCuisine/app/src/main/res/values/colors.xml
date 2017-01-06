@@ -10,6 +10,7 @@
     <color name="golden_stars">#FFC619</color>
     <color name="dividerGrey">#EEEEEE</color>
     <color name="textGrey">#9E9E9E</color>
+    <color name="borderGrey">#E0E0E0</color>
 
     <color name="grey_500">#9E9E9E</color>
     <color name="grey_200">#EEEEEE</color>

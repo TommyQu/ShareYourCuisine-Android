@@ -25,6 +25,9 @@ import com.sangcomz.fishbun.FishBun;
 import com.sangcomz.fishbun.define.Define;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
+import com.toe.shareyourcuisine.model.Event;
+import com.toe.shareyourcuisine.service.EventService;
+import com.toe.shareyourcuisine.utils.SYCUtils;
 import com.wdullaer.materialdatetimepicker.date.DatePickerDialog;
 import com.wdullaer.materialdatetimepicker.time.TimePickerDialog;
 import com.weiwangcn.betterspinner.library.material.MaterialBetterSpinner;
@@ -39,7 +42,7 @@ import java.util.List;
  * Created by HQu on 1/5/2017.
  */
 
-public class CreateEventActivity extends BaseActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, Validator.ValidationListener {
+public class CreateEventActivity extends BaseActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, Validator.ValidationListener, EventService.CreateEventListener {
 
     @NotEmpty
     private MaterialEditText mTitleET;
@@ -50,7 +53,9 @@ public class CreateEventActivity extends BaseActivity implements DatePickerDialo
     @NotEmpty
     private MaterialEditText mLocationET;
     @NotEmpty
-    private MaterialEditText mNumberOfGuestsET;
+    private MaterialEditText mMaxNumberOfGuestsET;
+    @NotEmpty
+    private MaterialEditText mDescET;
     private ImageView mDisplayIV;
     private Button mSelectImgBtn;
     private Button mSubmitBtn;
@@ -65,6 +70,7 @@ public class CreateEventActivity extends BaseActivity implements DatePickerDialo
     private String mDateTimeType;
     private String mDisplayImgUrl;
     private Validator mValidator;
+    private MaterialDialog mMaterialDialog;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -78,7 +84,8 @@ public class CreateEventActivity extends BaseActivity implements DatePickerDialo
         mStartTimeET = (MaterialEditText)findViewById(R.id.start_time_et);
         mEndTimeET = (MaterialEditText)findViewById(R.id.end_time_et);
         mLocationET = (MaterialEditText)findViewById(R.id.location_et);
-        mNumberOfGuestsET = (MaterialEditText) findViewById(R.id.number_of_guests_et);
+        mMaxNumberOfGuestsET = (MaterialEditText) findViewById(R.id.max_number_of_guests_et);
+        mDescET = (MaterialEditText)findViewById(R.id.desc_et);
         mDisplayIV = (ImageView) findViewById(R.id.display_img_iv);
         mSelectImgBtn = (Button) findViewById(R.id.select_img_btn);
         mSubmitBtn = (Button) findViewById(R.id.submit_btn);
@@ -121,6 +128,13 @@ public class CreateEventActivity extends BaseActivity implements DatePickerDialo
                         .setPickerCount(1)
                         .setCamera(true)
                         .startAlbum();
+            }
+        });
+
+        mSubmitBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mValidator.validate();
             }
         });
     }
@@ -183,6 +197,28 @@ public class CreateEventActivity extends BaseActivity implements DatePickerDialo
 
     @Override
     public void onValidationSucceeded() {
+        if(mEndDateTime <= mStartDateTime) {
+            Toast.makeText(this, "End time should be later than start time!", Toast.LENGTH_LONG).show();
+        } else {
+            mMaterialDialog = new MaterialDialog.Builder(CreateEventActivity.this)
+                    .title("Creating event")
+                    .content("Please wait")
+                    .progress(true, 0)
+                    .show();
+            Event event = new Event();
+            event.setTitle(mTitleET.getText().toString());
+            event.setStartTime(mStartDateTime);
+            event.setEndTime(mEndDateTime);
+            event.setLocation(mLocationET.getText().toString());
+            event.setDesc(mDescET.getText().toString());
+            event.setDisplayImgUrl(mDisplayImgUrl);
+            event.setMaxNumberOfGuests(Integer.parseInt(mMaxNumberOfGuestsET.getText().toString()));
+            event.setCreatedAt(SYCUtils.getCurrentEST());
+            event.setCreatedBy(mAuth.getCurrentUser().getUid());
+            EventService eventService = new EventService(CreateEventActivity.this);
+            eventService.setCreateEventListener(CreateEventActivity.this);
+            eventService.createEvent(event);
+        }
 
     }
 
@@ -198,5 +234,18 @@ public class CreateEventActivity extends BaseActivity implements DatePickerDialo
                 Toast.makeText(this, message, Toast.LENGTH_LONG).show();
             }
         }
+    }
+
+    @Override
+    public void createEventSucceed() {
+        mMaterialDialog.dismiss();
+        Toast.makeText(this, "Create event successfully!", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    @Override
+    public void createEventFail(String errorMsg) {
+        mMaterialDialog.dismiss();
+        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
     }
 }

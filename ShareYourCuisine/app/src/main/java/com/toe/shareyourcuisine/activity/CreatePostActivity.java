@@ -70,11 +70,6 @@ public class CreatePostActivity extends BaseActivity implements Validator.Valida
         mSubmitBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                mMaterialDialog = new MaterialDialog.Builder(CreatePostActivity.this)
-                        .title("Creating post")
-                        .content("Please wait")
-                        .progress(true, 0)
-                        .show();
                 mValidator.validate();
             }
         });
@@ -92,6 +87,11 @@ public class CreatePostActivity extends BaseActivity implements Validator.Valida
 
     @Override
     public void onValidationSucceeded() {
+        mMaterialDialog = new MaterialDialog.Builder(CreatePostActivity.this)
+                .title("Creating post")
+                .content("Please wait")
+                .progress(true, 0)
+                .show();
         Post post = new Post();
         post.setContent(mContentET.getText().toString());
         post.setCreatedBy(mAuth.getCurrentUser().getUid());
@@ -105,7 +105,6 @@ public class CreatePostActivity extends BaseActivity implements Validator.Valida
 
     @Override
     public void onValidationFailed(List<ValidationError> errors) {
-        mMaterialDialog.dismiss();
         for (ValidationError error : errors) {
             View view = error.getView();
             String message = error.getCollatedErrorMessage(this);
