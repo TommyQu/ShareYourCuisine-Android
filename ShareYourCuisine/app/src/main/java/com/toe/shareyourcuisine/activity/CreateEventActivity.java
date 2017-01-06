@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
@@ -44,6 +45,7 @@ import java.util.List;
 
 public class CreateEventActivity extends BaseActivity implements DatePickerDialog.OnDateSetListener, TimePickerDialog.OnTimeSetListener, Validator.ValidationListener, EventService.CreateEventListener {
 
+    private static final String TAG = "ToeCreateEvent:";
     @NotEmpty
     private MaterialEditText mTitleET;
     @NotEmpty
@@ -199,6 +201,8 @@ public class CreateEventActivity extends BaseActivity implements DatePickerDialo
     public void onValidationSucceeded() {
         if(mEndDateTime <= mStartDateTime) {
             Toast.makeText(this, "End time should be later than start time!", Toast.LENGTH_LONG).show();
+        } else if(mDisplayImgUrl == null || mDisplayImgUrl == "") {
+            Toast.makeText(this, "Please upload a display image!", Toast.LENGTH_LONG).show();
         } else {
             mMaterialDialog = new MaterialDialog.Builder(CreateEventActivity.this)
                     .title("Creating event")

@@ -53,6 +53,9 @@
         <activity android:name=".activity.CreateEventActivity"
                   android:label="Create Event">
         </activity>
+        <activity android:name=".activity.OneEventActivity"
+                  android:label="One Event">
+        </activity>
     </application>
 
 </manifest>

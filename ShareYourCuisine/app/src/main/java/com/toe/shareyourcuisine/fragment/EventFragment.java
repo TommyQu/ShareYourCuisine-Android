@@ -19,6 +19,7 @@ import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.activity.CreateEventActivity;
 import com.toe.shareyourcuisine.activity.CreatePostActivity;
 import com.toe.shareyourcuisine.activity.MainActivity;
+import com.toe.shareyourcuisine.activity.OneEventActivity;
 import com.toe.shareyourcuisine.activity.OneRecipeActivity;
 import com.toe.shareyourcuisine.adapter.EventRecyclerViewAdapter;
 import com.toe.shareyourcuisine.adapter.PostRecyclerViewAdapter;
@@ -92,9 +93,9 @@ public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         mAdapter.setEventItemClickListener(new EventRecyclerViewAdapter.EventItemClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-//                Intent intent = new Intent(getActivity(), OneRecipeActivity.class);
-//                intent.putExtra("uid", eventItems.get(position).getUid());
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), OneEventActivity.class);
+                intent.putExtra("eventId", eventItems.get(position).getUid());
+                startActivity(intent);
             }
         });
 

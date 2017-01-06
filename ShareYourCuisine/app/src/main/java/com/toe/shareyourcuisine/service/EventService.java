@@ -3,6 +3,7 @@ package com.toe.shareyourcuisine.service;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -34,11 +35,13 @@ import id.zelory.compressor.Compressor;
 public class EventService {
 
     private static final String TAG = "ToeEventService:";
+    private FirebaseDatabase mFirebaseDatabase;
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mStorageRef;
     private StorageReference mImgStorageRef;
     private CreateEventListener mCreateEventListener;
     private GetAllEventItemsListener mGetAllEventItemsListener;
+    private GetEventItemByIdListener mGetEventItemByIdListener;
     private Context mContext;
     private Event mEventToCreate;
 
@@ -52,8 +55,14 @@ public class EventService {
         public void getAllEventItemsFail(String errorMsg);
     }
 
+    public interface GetEventItemByIdListener {
+        public void getEventItemByIdSucceed(EventItem eventItem);
+        public void getEventItemByIdFail(String errorMsg);
+    }
+
     public EventService(Context context) {
         mContext = context;
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
     }
 
     public void setCreateEventListener(CreateEventListener createEventListener) {
@@ -62,6 +71,10 @@ public class EventService {
 
     public void setGetAllEventItemsListener(GetAllEventItemsListener getAllEventItemsListener) {
         mGetAllEventItemsListener = getAllEventItemsListener;
+    }
+
+    public void setGetEventItemByIdListener(GetEventItemByIdListener getEventItemByIdListener) {
+        mGetEventItemByIdListener = getEventItemByIdListener;
     }
 
     public void createEvent(Event event) {
@@ -93,8 +106,7 @@ public class EventService {
     }
 
     public void insertEventData() {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference eventRef = firebaseDatabase.getReference("event");
+        DatabaseReference eventRef = mFirebaseDatabase.getReference("event");
         eventRef.push().setValue(mEventToCreate, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
@@ -107,9 +119,8 @@ public class EventService {
     }
 
     public void getAllEventItems() {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference postRef = firebaseDatabase.getReference("event");
-        postRef.orderByChild("createdAt").addListenerForSingleValueEvent(new ValueEventListener() {
+        DatabaseReference eventRef = mFirebaseDatabase.getReference("event");
+        eventRef.orderByChild("createdAt").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<EventItem> eventItems = new ArrayList<EventItem>();
@@ -125,6 +136,36 @@ public class EventService {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 mGetAllEventItemsListener.getAllEventItemsFail(databaseError.getMessage());
+            }
+        });
+    }
+
+    public void getEventItemById(String uid) {
+        DatabaseReference eventRef = mFirebaseDatabase.getReference("event");
+        final DatabaseReference userRef = mFirebaseDatabase.getReference("user");
+        eventRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                final EventItem eventItem = dataSnapshot.getValue(EventItem.class);
+                userRef.child(eventItem.getCreatedBy()).addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(DataSnapshot dataSnapshot) {
+                        User user = dataSnapshot.getValue(User.class);
+                        eventItem.setCreatedUserName(user.getfName() + " " + user.getlName());
+                        eventItem.setCreatedUserAvatarUrl(user.getAvatarUrl());
+                        mGetEventItemByIdListener.getEventItemByIdSucceed(eventItem);
+                    }
+
+                    @Override
+                    public void onCancelled(DatabaseError databaseError) {
+                        mGetEventItemByIdListener.getEventItemByIdFail(databaseError.getMessage());
+                    }
+                });
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mGetEventItemByIdListener.getEventItemByIdFail(databaseError.getMessage());
             }
         });
     }
