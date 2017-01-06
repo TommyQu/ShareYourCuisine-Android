@@ -14,7 +14,9 @@ public class Post {
     private String uid;
     private String content;
     private String imgUrl;
-    private String createdBy;
+    private String createdUserId;
+    private String createdUserName;
+    private String createdUserAvatarUrl;
     private Long createdAt;
     private int totalLikes;
     private ArrayList<String> likedBy;
@@ -47,12 +49,28 @@ public class Post {
         this.imgUrl = imgUrl;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getCreatedUserId() {
+        return createdUserId;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setCreatedUserId(String createdUserId) {
+        this.createdUserId = createdUserId;
+    }
+
+    public String getCreatedUserName() {
+        return createdUserName;
+    }
+
+    public void setCreatedUserName(String createdUserName) {
+        this.createdUserName = createdUserName;
+    }
+
+    public String getCreatedUserAvatarUrl() {
+        return createdUserAvatarUrl;
+    }
+
+    public void setCreatedUserAvatarUrl(String createdUserAvatarUrl) {
+        this.createdUserAvatarUrl = createdUserAvatarUrl;
     }
 
     public Long getCreatedAt() {

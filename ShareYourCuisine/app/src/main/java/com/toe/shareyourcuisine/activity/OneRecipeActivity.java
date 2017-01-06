@@ -5,7 +5,6 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
@@ -22,20 +21,14 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.adapter.CommentRecyclerViewAdapter;
-import com.toe.shareyourcuisine.adapter.PostRecyclerViewAdapter;
 import com.toe.shareyourcuisine.libs.RatingDialog;
 import com.toe.shareyourcuisine.model.Comment;
-import com.toe.shareyourcuisine.model.CommentItem;
 import com.toe.shareyourcuisine.model.Recipe;
-import com.toe.shareyourcuisine.model.User;
 import com.toe.shareyourcuisine.service.CommentService;
 import com.toe.shareyourcuisine.service.RecipeService;
-import com.toe.shareyourcuisine.service.UserService;
-import com.toe.shareyourcuisine.utils.Constants;
 
 import org.parceler.Parcels;
 
-import java.io.File;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
@@ -44,7 +37,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by HQu on 12/19/2016.
  */
 
-public class OneRecipeActivity extends BaseActivity implements UserService.GetUserInfoListener, RecipeService.RateRecipeListener, CommentService.CreateCommentListener, CommentService.GetCommentItemsByParentIdListener {
+public class OneRecipeActivity extends BaseActivity implements RecipeService.RateRecipeListener, CommentService.CreateCommentListener, CommentService.GetCommentsByParentIdListener {
 
     private ImageView mDisplayImgIV;
     private CircleImageView mCreatedUserAvatarIV;
@@ -92,6 +85,8 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
 
 //        Display recipe data
         Picasso.with(OneRecipeActivity.this).load(mRecipe.getDisplayImgUrl()).fit().centerCrop().into(mDisplayImgIV);
+        Picasso.with(OneRecipeActivity.this).load(mRecipe.getCreatedUserAvatarUrl()).fit().centerCrop().into(mCreatedUserAvatarIV);
+        mCreatedUserNameTV.setText(mRecipe.getCreatedUserName());
         mFlavorTV.setText(mRecipe.getFlavorTypes());
         mTitleTV.setText(mRecipe.getTitle());
         if(mRecipe.getRatedBy().size() == 0)
@@ -175,7 +170,7 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
                                                 .show();
                                         CommentService commentService = new CommentService(OneRecipeActivity.this);
                                         commentService.setCreateCommentListener(OneRecipeActivity.this);
-                                        commentService.createComment(mRecipe.getUid(), contentET.getText().toString(), mAuth.getCurrentUser().getUid());
+                                        commentService.createComment(mRecipe.getUid(), contentET.getText().toString(), mAuth.getCurrentUser());
                                     } else
                                         Toast.makeText(OneRecipeActivity.this, "Comment length should between 10 and 400!", Toast.LENGTH_LONG).show();
 
@@ -188,13 +183,9 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
             }
         });
 
-        UserService userService = new UserService(OneRecipeActivity.this);
-        userService.setUserInfoListener(OneRecipeActivity.this);
-        userService.getUserInfo(mRecipe.getCreatedBy(), Constants.ACTION_GET_USER_PROFILE);
-
         CommentService commentService = new CommentService(OneRecipeActivity.this);
-        commentService.setGetCommentItemsByParentIdListener(OneRecipeActivity.this);
-        commentService.getCommentItemsByParentId(mRecipe.getUid());
+        commentService.setGetCommentsByParentIdListener(OneRecipeActivity.this);
+        commentService.getCommentsByParentId(mRecipe.getUid());
     }
 
     @Override
@@ -205,17 +196,6 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
                 return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void getUserInfoSucceed(User user) {
-        Picasso.with(OneRecipeActivity.this).load(user.getAvatarUrl()).fit().centerCrop().into(mCreatedUserAvatarIV);
-        mCreatedUserNameTV.setText(user.getfName() + " " + user.getlName());
-    }
-
-    @Override
-    public void getUserInfoFail(String errorMsg) {
-        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -233,8 +213,8 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
         mProgressDialog.dismiss();
         Toast.makeText(this, "Create comment successfully!", Toast.LENGTH_LONG).show();
         CommentService commentService = new CommentService(OneRecipeActivity.this);
-        commentService.setGetCommentItemsByParentIdListener(OneRecipeActivity.this);
-        commentService.getCommentItemsByParentId(mRecipe.getUid());
+        commentService.setGetCommentsByParentIdListener(OneRecipeActivity.this);
+        commentService.getCommentsByParentId(mRecipe.getUid());
     }
 
     @Override
@@ -244,13 +224,13 @@ public class OneRecipeActivity extends BaseActivity implements UserService.GetUs
     }
 
     @Override
-    public void getCommentItemsByParentIdSucceed(List<CommentItem> commentItems) {
-        mCommentAdapter = new CommentRecyclerViewAdapter(OneRecipeActivity.this, commentItems);
+    public void getCommentsByParentIdSucceed(List<Comment> comments) {
+        mCommentAdapter = new CommentRecyclerViewAdapter(OneRecipeActivity.this, comments);
         mCommentsRV.setAdapter(mCommentAdapter);
     }
 
     @Override
-    public void getCommentItemsByParentIdFail(String errorMsg) {
+    public void getCommentsByParentIdFail(String errorMsg) {
         Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
     }
 }

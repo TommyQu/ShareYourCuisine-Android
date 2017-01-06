@@ -1,12 +1,10 @@
 package com.toe.shareyourcuisine.model;
 
-import com.orm.dsl.Unique;
-
 /**
  * Created by HQu on 12/28/2016.
  */
 
-public class PostItem extends Post{
+public class AttendanceItem extends Attendance {
 
     private String createdUserName;
     private String createdUserAvatarUrl;

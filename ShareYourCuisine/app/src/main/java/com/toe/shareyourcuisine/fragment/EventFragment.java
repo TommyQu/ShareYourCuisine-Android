@@ -2,7 +2,6 @@ package com.toe.shareyourcuisine.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -17,21 +16,11 @@ import android.widget.Toast;
 
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.activity.CreateEventActivity;
-import com.toe.shareyourcuisine.activity.CreatePostActivity;
 import com.toe.shareyourcuisine.activity.MainActivity;
 import com.toe.shareyourcuisine.activity.OneEventActivity;
-import com.toe.shareyourcuisine.activity.OneRecipeActivity;
 import com.toe.shareyourcuisine.adapter.EventRecyclerViewAdapter;
-import com.toe.shareyourcuisine.adapter.PostRecyclerViewAdapter;
-import com.toe.shareyourcuisine.adapter.RecipeRecyclerViewAdapter;
 import com.toe.shareyourcuisine.model.Event;
-import com.toe.shareyourcuisine.model.EventItem;
-import com.toe.shareyourcuisine.model.PostItem;
 import com.toe.shareyourcuisine.service.EventService;
-import com.toe.shareyourcuisine.service.PostService;
-import com.toe.shareyourcuisine.service.RecipeService;
-
-import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -39,7 +28,7 @@ import java.util.List;
  * Created by HQu on 12/27/2016.
  */
 
-public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, EventService.GetAllEventItemsListener {
+public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, EventService.GetAllEventsListener {
 
     private static final String TAG = "ToeEventFragment:";
     private RecyclerView mEventRV;
@@ -82,19 +71,19 @@ public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     public void getAllEvents() {
         mEventSRL.setRefreshing(true);
         EventService eventService = new EventService(getActivity());
-        eventService.setGetAllEventItemsListener(this);
-        eventService.getAllEventItems();
+        eventService.setGetAllEventsListener(this);
+        eventService.getAllEvents();
     }
 
     @Override
-    public void getAllEventItemsSucceed(final List<EventItem> eventItems) {
+    public void getAllEventsSucceed(final List<Event> events) {
         mEventSRL.setRefreshing(false);
-        mAdapter = new EventRecyclerViewAdapter(getActivity(), eventItems);
-        mAdapter.setEventItemClickListener(new EventRecyclerViewAdapter.EventItemClickListener() {
+        mAdapter = new EventRecyclerViewAdapter(getActivity(), events);
+        mAdapter.setEventItemClickListener(new EventRecyclerViewAdapter.EventClickListener() {
             @Override
             public void onItemClick(int position, View v) {
                 Intent intent = new Intent(getActivity(), OneEventActivity.class);
-                intent.putExtra("eventId", eventItems.get(position).getUid());
+                intent.putExtra("eventId", events.get(position).getUid());
                 startActivity(intent);
             }
         });
@@ -104,7 +93,7 @@ public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     }
 
     @Override
-    public void getAllEventItemsFail(String errorMsg) {
+    public void getAllEventsFail(String errorMsg) {
         mEventSRL.setRefreshing(false);
         Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
     }

@@ -65,12 +65,22 @@
                 android:layout_below="@id/location_iv"
                 android:layout_marginTop="@dimen/activity_vertical_margin"/>
 
+            <Button
+                android:id="@+id/attend_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/desc_tv"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:text="Attend"
+                style="@style/PrimaryButton"/>
+
             <TextView
                 android:id="@+id/attendant_title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/time_iv"
-                android:layout_below="@id/desc_tv"
+                android:layout_below="@id/attend_btn"
                 android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:text="12 attendants"/>
 

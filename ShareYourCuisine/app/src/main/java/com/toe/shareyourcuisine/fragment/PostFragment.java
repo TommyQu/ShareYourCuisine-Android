@@ -2,7 +2,6 @@ package com.toe.shareyourcuisine.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
@@ -10,7 +9,6 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,10 +19,7 @@ import com.toe.shareyourcuisine.activity.CreatePostActivity;
 import com.toe.shareyourcuisine.activity.MainActivity;
 import com.toe.shareyourcuisine.adapter.PostRecyclerViewAdapter;
 import com.toe.shareyourcuisine.model.Post;
-import com.toe.shareyourcuisine.model.PostItem;
 import com.toe.shareyourcuisine.service.PostService;
-
-import org.parceler.Parcels;
 
 import java.util.List;
 
@@ -32,7 +27,7 @@ import java.util.List;
  * Created by HQu on 12/27/2016.
  */
 
-public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, PostService.GetAllPostItemsListener {
+public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, PostService.GetAllPostsListener {
 
     private static final String TAG = "ToePostFragment:";
     private RecyclerView mPostRV;
@@ -75,14 +70,14 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     public void getAllPosts() {
         mPostSRL.setRefreshing(true);
         PostService postService = new PostService(getActivity());
-        postService.setGetAllPostItemsListener(this);
-        postService.getAllPostItems();
+        postService.setGetAllPostsListener(this);
+        postService.getAllPosts();
     }
 
     @Override
-    public void getAllPostItemsSucceed(List<PostItem> postItems) {
-        mAdapter = new PostRecyclerViewAdapter(getActivity(), postItems);
-        mAdapter.setPostItemClickListener(new PostRecyclerViewAdapter.PostItemClickListener() {
+    public void getAllPostsSucceed(List<Post> posts) {
+        mAdapter = new PostRecyclerViewAdapter(getActivity(), posts);
+        mAdapter.setPostClickListener(new PostRecyclerViewAdapter.PostClickListener() {
             @Override
             public void onItemClick(int position, View v) {
 //                Intent intent = new Intent(getActivity(), OneRecipeActivity.class);
@@ -96,7 +91,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
-    public void getAllPostItemsFail(String errorMsg) {
+    public void getAllPostsFail(String errorMsg) {
         mPostSRL.setRefreshing(false);
         Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
     }

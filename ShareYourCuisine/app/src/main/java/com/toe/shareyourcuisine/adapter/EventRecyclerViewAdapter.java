@@ -11,44 +11,40 @@ import android.widget.TextView;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.model.Event;
-import com.toe.shareyourcuisine.model.EventItem;
-import com.toe.shareyourcuisine.model.PostItem;
 import com.toe.shareyourcuisine.utils.SYCUtils;
 
 import java.util.List;
-
-import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * Created by HQu on 12/27/2016.
  */
 
-public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecyclerViewAdapter.EventItemViewHolder> {
+public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecyclerViewAdapter.EventViewHolder> {
 
     private Context mContext;
-    private List<EventItem> mEventItems;
-    private static EventItemClickListener mEventItemClickListener;
+    private List<Event> mEvents;
+    private static EventClickListener mEventClickListener;
 
-    public EventRecyclerViewAdapter(Context context, List<EventItem> eventItems) {
+    public EventRecyclerViewAdapter(Context context, List<Event> events) {
         mContext = context;
-        mEventItems = eventItems;
+        mEvents = events;
     }
 
-    public interface EventItemClickListener {
+    public interface EventClickListener {
         public void onItemClick(int position, View v);
     }
 
-    public void setEventItemClickListener(EventItemClickListener eventItemClickListener) {
-        mEventItemClickListener = eventItemClickListener;
+    public void setEventItemClickListener(EventClickListener eventClickListener) {
+        mEventClickListener = eventClickListener;
     }
 
-    public static class EventItemViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class EventViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public ImageView mDisplayImgIV;
         public TextView mTimeTV;
         public TextView mTitleTV;
         public TextView mLocationTV;
 
-        public EventItemViewHolder(View itemView) {
+        public EventViewHolder(View itemView) {
             super(itemView);
             mDisplayImgIV = (ImageView)itemView.findViewById(R.id.display_img_iv);
             mTimeTV = (TextView)itemView.findViewById(R.id.time_tv);
@@ -59,32 +55,32 @@ public class EventRecyclerViewAdapter extends RecyclerView.Adapter<EventRecycler
 
         @Override
         public void onClick(View v) {
-            mEventItemClickListener.onItemClick(getAdapterPosition(), v);
+            mEventClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
 
     @Override
-    public EventItemViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public EventViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_event, parent, false);
-        EventItemViewHolder eventItemViewHolder = new EventItemViewHolder(view);
-        return eventItemViewHolder;
+        EventViewHolder eventViewHolder = new EventViewHolder(view);
+        return eventViewHolder;
     }
 
 
     @Override
-    public void onBindViewHolder(EventItemViewHolder holder, int position) {
-        String displayImgUrl = mEventItems.get(position).getDisplayImgUrl();
+    public void onBindViewHolder(EventViewHolder holder, int position) {
+        String displayImgUrl = mEvents.get(position).getDisplayImgUrl();
         if(displayImgUrl != null && displayImgUrl != "") {
             Picasso.with(mContext).load(displayImgUrl).fit().centerCrop().into(holder.mDisplayImgIV);
         }
-        holder.mTimeTV.setText(SYCUtils.convertMillisecondsToDateTime(mEventItems.get(position).getStartTime()) + " ~ " + SYCUtils.convertMillisecondsToDateTime(mEventItems.get(position).getEndTime()));
-        holder.mTitleTV.setText(mEventItems.get(position).getTitle());
-        holder.mLocationTV.setText(mEventItems.get(position).getLocation());
+        holder.mTimeTV.setText(SYCUtils.convertMillisecondsToDateTime(mEvents.get(position).getStartTime()) + " ~ " + SYCUtils.convertMillisecondsToDateTime(mEvents.get(position).getEndTime()));
+        holder.mTitleTV.setText(mEvents.get(position).getTitle());
+        holder.mLocationTV.setText(mEvents.get(position).getLocation());
     }
 
     @Override
     public int getItemCount() {
-        return mEventItems.size();
+        return mEvents.size();
     }
 
 

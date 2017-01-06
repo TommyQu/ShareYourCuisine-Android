@@ -17,7 +17,9 @@ public class Event {
     private String location;
     private int maxNumberOfGuests;
     private String desc;
-    private String createdBy;
+    private String createdUserId;
+    private String createdUserName;
+    private String createdUserAvatarUrl;
     private Long createdAt;
 
     public String getUid() {
@@ -84,12 +86,28 @@ public class Event {
         this.desc = desc;
     }
 
-    public String getCreatedBy() {
-        return createdBy;
+    public String getCreatedUserId() {
+        return createdUserId;
     }
 
-    public void setCreatedBy(String createdBy) {
-        this.createdBy = createdBy;
+    public void setCreatedUserId(String createdUserId) {
+        this.createdUserId = createdUserId;
+    }
+
+    public String getCreatedUserName() {
+        return createdUserName;
+    }
+
+    public void setCreatedUserName(String createdUserName) {
+        this.createdUserName = createdUserName;
+    }
+
+    public String getCreatedUserAvatarUrl() {
+        return createdUserAvatarUrl;
+    }
+
+    public void setCreatedUserAvatarUrl(String createdUserAvatarUrl) {
+        this.createdUserAvatarUrl = createdUserAvatarUrl;
     }
 
     public Long getCreatedAt() {

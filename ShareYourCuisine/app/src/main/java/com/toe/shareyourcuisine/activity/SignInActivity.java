@@ -104,7 +104,7 @@ public class SignInActivity extends AppCompatActivity implements UserService.Sig
                 .progress(true, 0)
                 .show();
         UserService userService = new UserService(SignInActivity.this);
-        userService.setSignInListener((UserService.SignInListener) SignInActivity.this);
+        userService.setSignInListener(SignInActivity.this);
         userService.signIn(mEmailET.getText().toString(), mPwdET.getText().toString());
     }
 

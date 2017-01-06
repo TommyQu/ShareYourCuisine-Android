@@ -6,7 +6,7 @@ import com.orm.dsl.Unique;
  * Created by HQu on 1/5/2017.
  */
 
-public class EventAttendant {
+public class Attendance {
 
     @Unique
     private String uid;

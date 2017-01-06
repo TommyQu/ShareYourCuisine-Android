@@ -5,14 +5,11 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.model.Comment;
-import com.toe.shareyourcuisine.model.CommentItem;
-import com.toe.shareyourcuisine.model.PostItem;
 
 import java.util.List;
 
@@ -25,11 +22,11 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecyclerViewAdapter.CommentViewHolder> {
 
     private Context mContext;
-    private List<CommentItem> mCommentItems;
+    private List<Comment> mComments;
 
-    public CommentRecyclerViewAdapter(Context context, List<CommentItem> commentItems) {
+    public CommentRecyclerViewAdapter(Context context, List<Comment> comments) {
         mContext = context;
-        mCommentItems = commentItems;
+        mComments = comments;
     }
 
 
@@ -60,14 +57,14 @@ public class CommentRecyclerViewAdapter extends RecyclerView.Adapter<CommentRecy
 
     @Override
     public void onBindViewHolder(CommentViewHolder holder, int position) {
-        holder.mNameTV.setText(mCommentItems.get(position).getCreatedUserName());
-        holder.mContentTV.setText(mCommentItems.get(position).getContent());
-        Picasso.with(mContext).load(mCommentItems.get(position).getCreatedUserAvatarUrl()).fit().centerCrop().into(holder.mAvatarIV);
+        holder.mNameTV.setText(mComments.get(position).getCreatedUserName());
+        holder.mContentTV.setText(mComments.get(position).getContent());
+        Picasso.with(mContext).load(mComments.get(position).getCreatedUserAvatarUrl()).fit().centerCrop().into(holder.mAvatarIV);
     }
 
     @Override
     public int getItemCount() {
-        return mCommentItems.size();
+        return mComments.size();
     }
 
 

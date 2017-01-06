@@ -218,7 +218,9 @@ public class CreateEventActivity extends BaseActivity implements DatePickerDialo
             event.setDisplayImgUrl(mDisplayImgUrl);
             event.setMaxNumberOfGuests(Integer.parseInt(mMaxNumberOfGuestsET.getText().toString()));
             event.setCreatedAt(SYCUtils.getCurrentEST());
-            event.setCreatedBy(mAuth.getCurrentUser().getUid());
+            event.setCreatedUserId(mAuth.getCurrentUser().getUid());
+            event.setCreatedUserName(mAuth.getCurrentUser().getDisplayName());
+            event.setCreatedUserAvatarUrl(mAuth.getCurrentUser().getPhotoUrl().toString());
             EventService eventService = new EventService(CreateEventActivity.this);
             eventService.setCreateEventListener(CreateEventActivity.this);
             eventService.createEvent(event);

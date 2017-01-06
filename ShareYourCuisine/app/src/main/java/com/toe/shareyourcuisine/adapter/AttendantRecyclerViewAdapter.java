@@ -9,7 +9,6 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
-import com.toe.shareyourcuisine.model.CommentItem;
 import com.toe.shareyourcuisine.model.User;
 
 import java.util.List;

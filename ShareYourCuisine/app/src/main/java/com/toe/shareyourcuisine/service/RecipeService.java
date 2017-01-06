@@ -110,8 +110,8 @@ public class RecipeService {
         mFirebaseStorage = FirebaseStorage.getInstance();
         mStorageRef = mFirebaseStorage.getReferenceFromUrl("gs://shareyourcuisine.appspot.com");
         mRecipeToCreate = recipe;
-        uploadDisplayImg(recipe.getDisplayImgUrl(), recipe.getCreatedBy());
-        uploadContentImgs(contentImgUrls, recipe.getCreatedBy());
+        uploadDisplayImg(recipe.getDisplayImgUrl(), recipe.getCreatedUserId());
+        uploadContentImgs(contentImgUrls, recipe.getCreatedUserId());
     }
 
     public void uploadDisplayImg(String displayImgUrl, String uid) {

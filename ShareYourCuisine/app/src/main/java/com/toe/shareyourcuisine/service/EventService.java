@@ -3,7 +3,6 @@ package com.toe.shareyourcuisine.service;
 import android.content.Context;
 import android.net.Uri;
 import android.support.annotation.NonNull;
-import android.util.Log;
 
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
@@ -16,13 +15,12 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.toe.shareyourcuisine.model.Event;
-import com.toe.shareyourcuisine.model.EventItem;
 import com.toe.shareyourcuisine.model.Post;
-import com.toe.shareyourcuisine.model.PostItem;
 import com.toe.shareyourcuisine.model.User;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
@@ -40,8 +38,8 @@ public class EventService {
     private StorageReference mStorageRef;
     private StorageReference mImgStorageRef;
     private CreateEventListener mCreateEventListener;
-    private GetAllEventItemsListener mGetAllEventItemsListener;
-    private GetEventItemByIdListener mGetEventItemByIdListener;
+    private GetAllEventsListener mGetAllEventsListener;
+    private GetEventByIdListener mGetEventByIdListener;
     private Context mContext;
     private Event mEventToCreate;
 
@@ -50,14 +48,14 @@ public class EventService {
         public void createEventFail(String errorMsg);
     }
 
-    public interface GetAllEventItemsListener {
-        public void getAllEventItemsSucceed(List<EventItem> eventItems);
-        public void getAllEventItemsFail(String errorMsg);
+    public interface GetAllEventsListener {
+        public void getAllEventsSucceed(List<Event> events);
+        public void getAllEventsFail(String errorMsg);
     }
 
-    public interface GetEventItemByIdListener {
-        public void getEventItemByIdSucceed(EventItem eventItem);
-        public void getEventItemByIdFail(String errorMsg);
+    public interface GetEventByIdListener {
+        public void getEventByIdSucceed(Event event);
+        public void getEventByIdFail(String errorMsg);
     }
 
     public EventService(Context context) {
@@ -69,12 +67,12 @@ public class EventService {
         mCreateEventListener = createEventListener;
     }
 
-    public void setGetAllEventItemsListener(GetAllEventItemsListener getAllEventItemsListener) {
-        mGetAllEventItemsListener = getAllEventItemsListener;
+    public void setGetAllEventsListener(GetAllEventsListener getAllEventsListener) {
+        mGetAllEventsListener = getAllEventsListener;
     }
 
-    public void setGetEventItemByIdListener(GetEventItemByIdListener getEventItemByIdListener) {
-        mGetEventItemByIdListener = getEventItemByIdListener;
+    public void setGetEventByIdListener(GetEventByIdListener getEventByIdListener) {
+        mGetEventByIdListener = getEventByIdListener;
     }
 
     public void createEvent(Event event) {
@@ -87,7 +85,7 @@ public class EventService {
         mStorageRef = mFirebaseStorage.getReferenceFromUrl("gs://shareyourcuisine.appspot.com");
         File compressedImg = new Compressor.Builder(mContext).build().compressToFile(new File(imgUrl));
         Uri file = Uri.fromFile(compressedImg);
-        mImgStorageRef = mStorageRef.child("images/event/" + mEventToCreate.getCreatedBy() + "/" + UUID.randomUUID().toString());
+        mImgStorageRef = mStorageRef.child("images/event/" + mEventToCreate.getCreatedUserId() + "/" + UUID.randomUUID().toString());
         UploadTask uploadTask = mImgStorageRef.putFile(file);
         uploadTask.addOnFailureListener(new OnFailureListener() {
             @Override
@@ -118,54 +116,40 @@ public class EventService {
         });
     }
 
-    public void getAllEventItems() {
+    public void getAllEvents() {
         DatabaseReference eventRef = mFirebaseDatabase.getReference("event");
         eventRef.orderByChild("createdAt").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                List<EventItem> eventItems = new ArrayList<EventItem>();
+                List<Event> events = new ArrayList<Event>();
                 for(DataSnapshot eventSnapShot: dataSnapshot.getChildren()) {
-                    EventItem eventItem = eventSnapShot.getValue(EventItem.class);
-                    eventItem.setUid(eventSnapShot.getKey());
-                    eventItems.add(eventItem);
+                    Event event = eventSnapShot.getValue(Event.class);
+                    event.setUid(eventSnapShot.getKey());
+                    events.add(event);
 
                 }
-                mGetAllEventItemsListener.getAllEventItemsSucceed(eventItems);
+                mGetAllEventsListener.getAllEventsSucceed(events);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                mGetAllEventItemsListener.getAllEventItemsFail(databaseError.getMessage());
+                mGetAllEventsListener.getAllEventsFail(databaseError.getMessage());
             }
         });
     }
 
-    public void getEventItemById(String uid) {
-        DatabaseReference eventRef = mFirebaseDatabase.getReference("event");
-        final DatabaseReference userRef = mFirebaseDatabase.getReference("user");
+    public void getEventById(String uid) {
+        final DatabaseReference eventRef = mFirebaseDatabase.getReference("event");
         eventRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final EventItem eventItem = dataSnapshot.getValue(EventItem.class);
-                userRef.child(eventItem.getCreatedBy()).addListenerForSingleValueEvent(new ValueEventListener() {
-                    @Override
-                    public void onDataChange(DataSnapshot dataSnapshot) {
-                        User user = dataSnapshot.getValue(User.class);
-                        eventItem.setCreatedUserName(user.getfName() + " " + user.getlName());
-                        eventItem.setCreatedUserAvatarUrl(user.getAvatarUrl());
-                        mGetEventItemByIdListener.getEventItemByIdSucceed(eventItem);
-                    }
-
-                    @Override
-                    public void onCancelled(DatabaseError databaseError) {
-                        mGetEventItemByIdListener.getEventItemByIdFail(databaseError.getMessage());
-                    }
-                });
+                Event event = dataSnapshot.getValue(Event.class);
+                mGetEventByIdListener.getEventByIdSucceed(event);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                mGetEventItemByIdListener.getEventItemByIdFail(databaseError.getMessage());
+                mGetEventByIdListener.getEventByIdFail(databaseError.getMessage());
             }
         });
     }

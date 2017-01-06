@@ -8,12 +8,9 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.iarcuschin.simpleratingbar.SimpleRatingBar;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.model.Post;
-import com.toe.shareyourcuisine.model.PostItem;
-import com.toe.shareyourcuisine.model.Recipe;
 import com.toe.shareyourcuisine.utils.SYCUtils;
 
 import java.util.List;
@@ -27,20 +24,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
 public class PostRecyclerViewAdapter extends RecyclerView.Adapter<PostRecyclerViewAdapter.PostViewHolder> {
 
     private Context mContext;
-    private List<PostItem> mPostItems;
-    private static PostItemClickListener mPostItemClickListener;
+    private List<Post> mPosts;
+    private static PostClickListener mPostClickListener;
 
-    public PostRecyclerViewAdapter(Context context, List<PostItem> postItems) {
+    public PostRecyclerViewAdapter(Context context, List<Post> posts) {
         mContext = context;
-        mPostItems = postItems;
+        mPosts = posts;
     }
 
-    public interface PostItemClickListener {
+    public interface PostClickListener {
         public void onItemClick(int position, View v);
     }
 
-    public void setPostItemClickListener(PostItemClickListener postItemClickListener) {
-        mPostItemClickListener = postItemClickListener;
+    public void setPostClickListener(PostClickListener postClickListener) {
+        mPostClickListener = postClickListener;
     }
 
     public static class PostViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
@@ -65,7 +62,7 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter<PostRecyclerVi
 
         @Override
         public void onClick(View v) {
-            mPostItemClickListener.onItemClick(getAdapterPosition(), v);
+            mPostClickListener.onItemClick(getAdapterPosition(), v);
         }
     }
 
@@ -78,22 +75,22 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter<PostRecyclerVi
 
     @Override
     public void onBindViewHolder(PostViewHolder holder, int position) {
-        String postImgUrl = mPostItems.get(position).getImgUrl();
+        String postImgUrl = mPosts.get(position).getImgUrl();
         if(postImgUrl != null && postImgUrl != "") {
             holder.mImgIV.getLayoutParams().width = (int) mContext.getResources().getDimension(R.dimen.img_dimen);
             holder.mImgIV.getLayoutParams().height = (int) mContext.getResources().getDimension(R.dimen.img_dimen);
             Picasso.with(mContext).load(postImgUrl).fit().centerCrop().into(holder.mImgIV);
         }
-        holder.mNameTV.setText(mPostItems.get(position).getCreatedUserName());
-        holder.mContentTV.setText(mPostItems.get(position).getContent());
-        Picasso.with(mContext).load(mPostItems.get(position).getCreatedUserAvatarUrl()).fit().centerCrop().into(holder.mAvatarIV);
-        holder.mCreatedAtTV.setText(SYCUtils.convertMillisecondsToDateTime(mPostItems.get(position).getCreatedAt()));
-        holder.mTotalLikesNumTV.setText(mPostItems.get(position).getTotalLikes() + " likes");
+        holder.mNameTV.setText(mPosts.get(position).getCreatedUserName());
+        holder.mContentTV.setText(mPosts.get(position).getContent());
+        Picasso.with(mContext).load(mPosts.get(position).getCreatedUserAvatarUrl()).fit().centerCrop().into(holder.mAvatarIV);
+        holder.mCreatedAtTV.setText(SYCUtils.convertMillisecondsToDateTime(mPosts.get(position).getCreatedAt()));
+        holder.mTotalLikesNumTV.setText(mPosts.get(position).getTotalLikes() + " likes");
     }
 
     @Override
     public int getItemCount() {
-        return mPostItems.size();
+        return mPosts.size();
     }
 
 

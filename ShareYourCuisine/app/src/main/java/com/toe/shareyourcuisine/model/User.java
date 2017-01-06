@@ -7,7 +7,7 @@ import com.orm.dsl.Unique;
  * Created by HQu on 12/7/2016.
  */
 
-public class User extends SugarRecord {
+public class User {
 
     @Unique
     private String uid;
