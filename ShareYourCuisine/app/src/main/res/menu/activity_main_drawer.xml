@@ -7,25 +7,29 @@
             android:icon="@drawable/ic_home"
             android:title="Home"/>
         <item
-            android:id="@+id/nav_recipes"
+            android:id="@+id/nav_recipe"
             android:icon="@drawable/ic_restaurant"
-            android:title="Recipes"/>
+            android:title="Recipe"/>
         <item
-            android:id="@+id/nav_posts"
+            android:id="@+id/nav_post"
             android:icon="@drawable/ic_action_news"
-            android:title="Posts"/>
+            android:title="Post"/>
         <item
-            android:id="@+id/nav_events"
+            android:id="@+id/nav_event"
             android:icon="@drawable/ic_local_bar"
-            android:title="Events"/>
+            android:title="Event"/>
     </group>
 
-    <item android:title="Communicate">
+    <item android:title="Submenu">
         <menu>
             <item
                 android:id="@+id/nav_sign_in"
                 android:icon="@drawable/ic_action_import"
                 android:title="Sign In"/>
+            <item
+                android:id="@+id/nav_msg"
+                android:icon="@drawable/ic_message"
+                android:title="Message"/>
             <item
                 android:id="@+id/nav_profile"
                 android:icon="@drawable/ic_action_user"

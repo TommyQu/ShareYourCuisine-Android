@@ -35,6 +35,10 @@
             android:label="Register" >
         </activity>
         <activity
+            android:name=".activity.MessageActivity"
+            android:label="Message" >
+        </activity>
+        <activity
             android:name=".activity.ProfileActivity"
             android:label="Profile" >
         </activity>

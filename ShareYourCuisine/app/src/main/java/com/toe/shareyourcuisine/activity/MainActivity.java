@@ -151,13 +151,13 @@ public class MainActivity extends BaseActivity
         if (id == R.id.nav_home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
             setTitle(item.getTitle());
-        } else if (id == R.id.nav_recipes) {
+        } else if (id == R.id.nav_recipe) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new RecipeFragment()).commit();
             setTitle(item.getTitle());
-        } else if (id == R.id.nav_posts) {
+        } else if (id == R.id.nav_post) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new PostFragment()).commit();
             setTitle(item.getTitle());
-        } else if (id == R.id.nav_events) {
+        } else if (id == R.id.nav_event) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new EventFragment()).commit();
             setTitle(item.getTitle());
         } else if (id == R.id.nav_sign_in) {
@@ -168,6 +168,9 @@ public class MainActivity extends BaseActivity
             mAuthAction = "sign out";
         } else if (id == R.id.nav_profile) {
             Intent intent = new Intent(MainActivity.this, ProfileActivity.class);
+            startActivity(intent);
+        } else if (id == R.id.nav_msg) {
+            Intent intent = new Intent(MainActivity.this, MessageActivity.class);
             startActivity(intent);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

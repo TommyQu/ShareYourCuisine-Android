@@ -9,6 +9,7 @@ import android.widget.TextView;
 
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
+import com.toe.shareyourcuisine.model.Attendance;
 import com.toe.shareyourcuisine.model.User;
 
 import java.util.List;
@@ -19,20 +20,20 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by HQu on 12/27/2016.
  */
 
-public class AttendantRecyclerViewAdapter extends RecyclerView.Adapter<AttendantRecyclerViewAdapter.AttendantViewHolder> {
+public class AttendanceRecyclerViewAdapter extends RecyclerView.Adapter<AttendanceRecyclerViewAdapter.AttendanceViewHolder> {
 
     private Context mContext;
-    private List<User> mAttendants;
+    private List<Attendance> mAttendances;
 
-    public AttendantRecyclerViewAdapter(Context context, List<User> attendants) {
+    public AttendanceRecyclerViewAdapter(Context context, List<Attendance> attendances) {
         mContext = context;
-        mAttendants = attendants;
+        mAttendances = attendances;
     }
 
-    public static class AttendantViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
+    public static class AttendanceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public CircleImageView mAvatarIV;
         public TextView mNameTV;
-        public AttendantViewHolder(View itemView) {
+        public AttendanceViewHolder(View itemView) {
             super(itemView);
             mAvatarIV = (CircleImageView)itemView.findViewById(R.id.avatar_iv);
             mNameTV = (TextView)itemView.findViewById(R.id.name_tv);
@@ -46,21 +47,21 @@ public class AttendantRecyclerViewAdapter extends RecyclerView.Adapter<Attendant
     }
 
     @Override
-    public AttendantViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+    public AttendanceViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_attendant, parent, false);
-        AttendantViewHolder attendantViewHolder = new AttendantViewHolder(view);
-        return attendantViewHolder;
+        AttendanceViewHolder attendanceViewHolder = new AttendanceViewHolder(view);
+        return attendanceViewHolder;
     }
 
     @Override
-    public void onBindViewHolder(AttendantViewHolder holder, int position) {
-        holder.mNameTV.setText(mAttendants.get(position).getfName() + " " + mAttendants.get(position).getlName());
-        Picasso.with(mContext).load(mAttendants.get(position).getAvatarUrl()).fit().centerCrop().into(holder.mAvatarIV);
+    public void onBindViewHolder(AttendanceViewHolder holder, int position) {
+        holder.mNameTV.setText(mAttendances.get(position).getUserName());
+        Picasso.with(mContext).load(mAttendances.get(position).getUserAvatarUrl()).fit().centerCrop().into(holder.mAvatarIV);
     }
 
     @Override
     public int getItemCount() {
-        return mAttendants.size();
+        return mAttendances.size();
 }
 
 

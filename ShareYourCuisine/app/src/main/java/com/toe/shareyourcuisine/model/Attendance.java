@@ -6,12 +6,14 @@ import com.orm.dsl.Unique;
  * Created by HQu on 1/5/2017.
  */
 
-public class Attendance {
+public class Attendance{
 
     @Unique
     private String uid;
     private String eventId;
     private String userId;
+    private String userName;
+    private String userAvatarUrl;
     private Long requestedAt;
     private String status;
 
@@ -37,6 +39,22 @@ public class Attendance {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserAvatarUrl() {
+        return userAvatarUrl;
+    }
+
+    public void setUserAvatarUrl(String userAvatarUrl) {
+        this.userAvatarUrl = userAvatarUrl;
     }
 
     public Long getRequestedAt() {

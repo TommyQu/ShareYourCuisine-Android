@@ -12,6 +12,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -22,7 +23,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.toe.shareyourcuisine.model.Attendance;
-import com.toe.shareyourcuisine.model.AttendanceItem;
+import com.toe.shareyourcuisine.model.Recipe;
 import com.toe.shareyourcuisine.model.User;
 import com.toe.shareyourcuisine.utils.SYCUtils;
 
@@ -46,9 +47,7 @@ public class UserService {
     private SignInListener mSignInListener;
     private RegisterListener mRegisterListener;
     private GetUserInfoListener mGetUserInfoListener;
-    private RequestEventAttendanceListener mRequestEventAttendanceListener;
-    private GetEventAttendanceItemsByEventIdListener mGetEventAttendanceItemsByEventIdListener;
-    private long mAttendantItemsCount;
+
     private User mUserToRegister;
 
     public interface SignInListener {
@@ -64,16 +63,6 @@ public class UserService {
     public interface GetUserInfoListener {
         public void getUserInfoSucceed(User user);
         public void getUserInfoFail(String errorMsg);
-    }
-
-    public interface RequestEventAttendanceListener {
-        public void requestEventAttendanceSucceed();
-        public void requestEventAttendanceFail(String errorMsg);
-    }
-
-    public interface GetEventAttendanceItemsByEventIdListener {
-        public void getEventAttendanceItemsSucceed(List<AttendanceItem> attendanceItems);
-        public void getEventAttendanceItemsFail(String errorMsg);
     }
 
     public UserService(Context context) {
@@ -92,14 +81,6 @@ public class UserService {
 
     public void setUserInfoListener(GetUserInfoListener getUserInfoListener) {
         mGetUserInfoListener = getUserInfoListener;
-    }
-
-    public void setRequestEventAttendanceListener(RequestEventAttendanceListener requestEventAttendanceListener) {
-        mRequestEventAttendanceListener = requestEventAttendanceListener;
-    }
-
-    public void setGetEventAttendanceItemsByEventIdListener(GetEventAttendanceItemsByEventIdListener getEventAttendanceItemsByEventIdListener) {
-        mGetEventAttendanceItemsByEventIdListener = getEventAttendanceItemsByEventIdListener;
     }
 
     public void signIn(final String email, String pwd) {
@@ -227,11 +208,13 @@ public class UserService {
                 });
     }
 
-    public void requestEventAttendance(String eventId, String userId) {
+    public void requestEventAttendance(String eventId, FirebaseUser currentUser) {
         DatabaseReference attendanceRef = mFirebaseDatabase.getReference("attendance");
         Attendance attendance = new Attendance();
         attendance.setEventId(eventId);
-        attendance.setUserId(userId);
+        attendance.setUserId(currentUser.getUid());
+        attendance.setUserName(currentUser.getDisplayName());
+        attendance.setUserAvatarUrl(currentUser.getPhotoUrl().toString());
         attendance.setRequestedAt(SYCUtils.getCurrentEST());
         attendance.setStatus("Pending");
         attendanceRef.push().setValue(attendance, new DatabaseReference.CompletionListener() {
@@ -245,43 +228,24 @@ public class UserService {
         });
     }
 
-    public void getEventAttendantItemsByEventId(String eventId, String status) {
+    public void getEventAttendancesByEventId(String eventId, String status) {
         DatabaseReference attendanceRef = mFirebaseDatabase.getReference("attendance");
-        final DatabaseReference userRef = mFirebaseDatabase.getReference("user");
-        mAttendantItemsCount = 0;
-        attendanceRef.orderByChild("eventId").equalTo(eventId).orderByChild("requestedAt").addListenerForSingleValueEvent(new ValueEventListener() {
+        attendanceRef.orderByChild("eventId").equalTo(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
-                final List<AttendanceItem> attendanceItems = new ArrayList<AttendanceItem>();
+                List<Attendance> attendances = new ArrayList<Attendance>();
                 for(DataSnapshot attendanceSnapShot: dataSnapshot.getChildren()) {
-                    final AttendanceItem attendanceItem = attendanceSnapShot.getValue(AttendanceItem.class);
-                    final long totalAttendanceItemsCount = dataSnapshot.getChildrenCount();
-                    attendanceItem.setUid(attendanceSnapShot.getKey());
-                    userRef.child(attendanceItem.getUserId()).addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(DataSnapshot dataSnapshot) {
-                            User user = dataSnapshot.getValue(User.class);
-                            attendanceItem.setCreatedUserName(user.getfName() + " " + user.getlName());
-                            attendanceItem.setCreatedUserAvatarUrl(user.getAvatarUrl());
-                            attendanceItems.add(attendanceItem);
-                            mAttendantItemsCount++;
-                            if(mAttendantItemsCount == totalAttendanceItemsCount) {
-                                Collections.reverse(attendanceItems);
-                                mGetEventAttendanceItemsByEventIdListener.getEventAttendanceItemsSucceed(attendanceItems);
-                            }
-                        }
-
-                        @Override
-                        public void onCancelled(DatabaseError databaseError) {
-                            mGetEventAttendanceItemsByEventIdListener.getEventAttendanceItemsFail(databaseError.getMessage());
-                        }
-                    });
+                    Attendance attendance = attendanceSnapShot.getValue(Attendance.class);
+                    attendance.setUid(attendanceSnapShot.getKey());
+                    attendances.add(attendance);
                 }
+                Collections.reverse(attendances);
+                mGetEventAttendancesByEventIdListener.getEventAttendancesSucceed(attendances);
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-                mGetEventAttendanceItemsByEventIdListener.getEventAttendanceItemsFail(databaseError.getMessage());
+                mGetEventAttendancesByEventIdListener.getEventAttendancesFail(databaseError.getMessage());
             }
         });
     }

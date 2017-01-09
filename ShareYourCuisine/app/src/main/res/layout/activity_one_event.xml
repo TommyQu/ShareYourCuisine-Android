@@ -21,13 +21,15 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/display_img_iv"
                 android:layout_centerHorizontal="true"
-                android:layout_marginTop="@dimen/activity_vertical_margin"/>
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                style="@style/ItemRecipeTitle"/>
 
             <ImageView
                 android:id="@+id/time_iv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/title_tv"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:src="@drawable/ic_access_time"
                 />
@@ -81,13 +83,21 @@
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/time_iv"
                 android:layout_below="@id/attend_btn"
-                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginTop="60dp"
                 android:text="12 attendants"/>
 
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/attendants_rv"
-                android:scrollbars="none"
+            <View
+                android:id="@+id/divider"
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
                 android:layout_below="@id/attendant_title_tv"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:background="@color/dividerGrey" />
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/attendances_rv"
+                android:scrollbars="none"
+                android:layout_below="@id/divider"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
