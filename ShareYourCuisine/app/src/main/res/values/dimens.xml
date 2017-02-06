@@ -7,4 +7,6 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
     <dimen name="img_dimen">250dp</dimen>
     <dimen name="avatar_dimen">150dp</dimen>
+    <dimen name="img_btn_dimen">35dp</dimen>
+    <dimen name="text_line_space">5dp</dimen>
 </resources>

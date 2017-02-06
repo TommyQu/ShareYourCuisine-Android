@@ -208,46 +208,4 @@ public class UserService {
                 });
     }
 
-    public void requestEventAttendance(String eventId, FirebaseUser currentUser) {
-        DatabaseReference attendanceRef = mFirebaseDatabase.getReference("attendance");
-        Attendance attendance = new Attendance();
-        attendance.setEventId(eventId);
-        attendance.setUserId(currentUser.getUid());
-        attendance.setUserName(currentUser.getDisplayName());
-        attendance.setUserAvatarUrl(currentUser.getPhotoUrl().toString());
-        attendance.setRequestedAt(SYCUtils.getCurrentEST());
-        attendance.setStatus("Pending");
-        attendanceRef.push().setValue(attendance, new DatabaseReference.CompletionListener() {
-            @Override
-            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
-                if(databaseError != null)
-                    mRequestEventAttendanceListener.requestEventAttendanceFail(databaseError.getMessage());
-                else
-                    mRequestEventAttendanceListener.requestEventAttendanceSucceed();
-            }
-        });
-    }
-
-    public void getEventAttendancesByEventId(String eventId, String status) {
-        DatabaseReference attendanceRef = mFirebaseDatabase.getReference("attendance");
-        attendanceRef.orderByChild("eventId").equalTo(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(DataSnapshot dataSnapshot) {
-                List<Attendance> attendances = new ArrayList<Attendance>();
-                for(DataSnapshot attendanceSnapShot: dataSnapshot.getChildren()) {
-                    Attendance attendance = attendanceSnapShot.getValue(Attendance.class);
-                    attendance.setUid(attendanceSnapShot.getKey());
-                    attendances.add(attendance);
-                }
-                Collections.reverse(attendances);
-                mGetEventAttendancesByEventIdListener.getEventAttendancesSucceed(attendances);
-            }
-
-            @Override
-            public void onCancelled(DatabaseError databaseError) {
-                mGetEventAttendancesByEventIdListener.getEventAttendancesFail(databaseError.getMessage());
-            }
-        });
-    }
-
 }

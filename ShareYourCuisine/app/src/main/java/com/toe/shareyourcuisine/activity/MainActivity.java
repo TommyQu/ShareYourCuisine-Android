@@ -82,6 +82,7 @@ public class MainActivity extends BaseActivity
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(true);
                     mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(false);
                     mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(false);
+                    mNavigationView.getMenu().findItem(R.id.nav_msg).setVisible(false);
                     Picasso.with(MainActivity.this).load(R.drawable.avatar).into(mAvatarCIV);
                     mEmailTV.setText("");
                     mNameTV.setText("Guest");

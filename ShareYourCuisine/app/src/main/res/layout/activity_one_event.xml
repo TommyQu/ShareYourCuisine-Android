@@ -77,6 +77,19 @@
                 android:text="Attend"
                 style="@style/PrimaryButton"/>
 
+            <Button
+                android:id="@+id/cancel_attendance_btn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/default_padding_top"
+                android:paddingRight="@dimen/default_padding_top"
+                android:layout_below="@id/desc_tv"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:visibility="invisible"
+                android:text="Cancel Attendance"
+                style="@style/SubButton"/>
+
             <TextView
                 android:id="@+id/attendant_title_tv"
                 android:layout_width="wrap_content"

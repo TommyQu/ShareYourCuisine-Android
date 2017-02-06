@@ -32,11 +32,9 @@ public class AttendanceRecyclerViewAdapter extends RecyclerView.Adapter<Attendan
 
     public static class AttendanceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener{
         public CircleImageView mAvatarIV;
-        public TextView mNameTV;
         public AttendanceViewHolder(View itemView) {
             super(itemView);
             mAvatarIV = (CircleImageView)itemView.findViewById(R.id.avatar_iv);
-            mNameTV = (TextView)itemView.findViewById(R.id.name_tv);
             itemView.setOnClickListener(this);
         }
 
@@ -55,7 +53,6 @@ public class AttendanceRecyclerViewAdapter extends RecyclerView.Adapter<Attendan
 
     @Override
     public void onBindViewHolder(AttendanceViewHolder holder, int position) {
-        holder.mNameTV.setText(mAttendances.get(position).getUserName());
         Picasso.with(mContext).load(mAttendances.get(position).getUserAvatarUrl()).fit().centerCrop().into(holder.mAvatarIV);
     }
 

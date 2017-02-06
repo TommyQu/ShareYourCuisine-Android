@@ -1,5 +1,6 @@
 package com.toe.shareyourcuisine.activity;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.GridLayoutManager;
@@ -18,16 +19,18 @@ import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.adapter.AttendanceRecyclerViewAdapter;
 import com.toe.shareyourcuisine.model.Attendance;
 import com.toe.shareyourcuisine.model.Event;
+import com.toe.shareyourcuisine.service.AttendanceService;
 import com.toe.shareyourcuisine.service.EventService;
 import com.toe.shareyourcuisine.service.UserService;
 import com.toe.shareyourcuisine.utils.SYCUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by HQu on 12/19/2016.
  */
-public class OneEventActivity extends BaseActivity implements EventService.GetEventByIdListener, UserService.RequestEventAttendanceListener, UserService.GetEventAttendancesByEventIdListener {
+public class OneEventActivity extends BaseActivity implements EventService.GetEventByIdListener, AttendanceService.RequestEventAttendanceListener, AttendanceService.GetEventAttendancesByEventIdListener, AttendanceService.CancelEventAttendanceListener {
 
     private static final String TAG = "ToeOneEventActivity:";
     private ImageView mDisplayImgIV;
@@ -36,10 +39,12 @@ public class OneEventActivity extends BaseActivity implements EventService.GetEv
     private TextView mLocationTV;
     private TextView mDescTV;
     private Button mAttendBtn;
+    private Button mCancelAttendanceBtn;
     private TextView mAttendantTitleTV;
     private RecyclerView mAttendanceRV;
     private AttendanceRecyclerViewAdapter mAdapter;
     private String mEventId;
+    private List<Attendance> mAttendances;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,17 +59,19 @@ public class OneEventActivity extends BaseActivity implements EventService.GetEv
         mLocationTV = (TextView)findViewById(R.id.location_tv);
         mDescTV = (TextView)findViewById(R.id.desc_tv);
         mAttendBtn = (Button)findViewById(R.id.attend_btn);
+        mCancelAttendanceBtn = (Button)findViewById(R.id.cancel_attendance_btn);
         mAttendantTitleTV = (TextView)findViewById(R.id.attendant_title_tv);
         mAttendanceRV = (RecyclerView)findViewById(R.id.attendances_rv);
-        mAttendanceRV.setLayoutManager(new GridLayoutManager(OneEventActivity.this, 4));
+        mAttendanceRV.setLayoutManager(new GridLayoutManager(OneEventActivity.this, 6));
+        mAttendances = new ArrayList<Attendance>();
 
         mAttendBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(mAuth.getCurrentUser() != null) {
-                    UserService userService = new UserService(OneEventActivity.this);
-                    userService.setRequestEventAttendanceListener(OneEventActivity.this);
-                    userService.requestEventAttendance(mEventId, mAuth.getCurrentUser());
+                    AttendanceService attendanceService = new AttendanceService(OneEventActivity.this);
+                    attendanceService.setRequestEventAttendanceListener(OneEventActivity.this);
+                    attendanceService.requestEventAttendance(mEventId, mAuth.getCurrentUser());
                 } else {
                     Toast.makeText(OneEventActivity.this, "Please log in!", Toast.LENGTH_SHORT).show();
                 }
@@ -72,13 +79,26 @@ public class OneEventActivity extends BaseActivity implements EventService.GetEv
             }
         });
 
+        mCancelAttendanceBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if(mAuth.getCurrentUser() != null) {
+                    AttendanceService attendanceService = new AttendanceService(OneEventActivity.this);
+                    attendanceService.setCancelEventAttendanceListener(OneEventActivity.this);
+                    attendanceService.cancelEventAttendance(mEventId, mAuth.getCurrentUser().getUid());
+                } else {
+                    Toast.makeText(OneEventActivity.this, "Please log in!", Toast.LENGTH_SHORT).show();
+                }
+            }
+        });
+
         EventService eventService = new EventService(OneEventActivity.this);
         eventService.setGetEventByIdListener(OneEventActivity.this);
         eventService.getEventById(mEventId);
 
-        UserService userService = new UserService(OneEventActivity.this);
-        userService.setGetEventAttendancesByEventIdListener(OneEventActivity.this);
-        userService.getEventAttendancesByEventId(mEventId, "Approved");
+        AttendanceService attendanceService = new AttendanceService(OneEventActivity.this);
+        attendanceService.setGetEventAttendancesByEventIdListener(OneEventActivity.this);
+        attendanceService.getEventAttendancesByEventId(mEventId, "Approved");
 
     }
 
@@ -109,6 +129,8 @@ public class OneEventActivity extends BaseActivity implements EventService.GetEv
     @Override
     public void requestEventAttendanceSucceed() {
         Toast.makeText(this, "Send request successfully!", Toast.LENGTH_LONG).show();
+        mAttendBtn.setVisibility(View.GONE);
+        mCancelAttendanceBtn.setVisibility(View.VISIBLE);
     }
 
     @Override
@@ -118,9 +140,17 @@ public class OneEventActivity extends BaseActivity implements EventService.GetEv
 
     @Override
     public void getEventAttendancesSucceed(List<Attendance> attendances) {
+        mAttendances = attendances;
         mAttendantTitleTV.setText(attendances.size() + " attendants");
-        mAdapter = new AttendanceRecyclerViewAdapter(OneEventActivity.this, attendances);
+        mAdapter = new AttendanceRecyclerViewAdapter(OneEventActivity.this, mAttendances);
         mAttendanceRV.setAdapter(mAdapter);
+
+        for(int i = 0; i < mAttendances.size(); i++) {
+            if(mAttendances.get(i).getUserId().equalsIgnoreCase(mAuth.getCurrentUser().getUid())) {
+                mAttendBtn.setVisibility(View.GONE);
+                mCancelAttendanceBtn.setVisibility(View.VISIBLE);
+            }
+        }
     }
 
     @Override
@@ -128,4 +158,18 @@ public class OneEventActivity extends BaseActivity implements EventService.GetEv
         Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
     }
 
+    @Override
+    public void cancelEventAttendanceSucceed() {
+        Toast.makeText(this, "Cancel Attendance Successfully!", Toast.LENGTH_LONG).show();
+        mAttendBtn.setVisibility(View.VISIBLE);
+        mCancelAttendanceBtn.setVisibility(View.GONE);
+        AttendanceService attendanceService = new AttendanceService(OneEventActivity.this);
+        attendanceService.setGetEventAttendancesByEventIdListener(OneEventActivity.this);
+        attendanceService.getEventAttendancesByEventId(mEventId, "Approved");
+    }
+
+    @Override
+    public void cancelEventAttendanceFail(String errorMsg) {
+        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+    }
 }

@@ -12,6 +12,7 @@ public class Attendance{
     private String uid;
     private String eventId;
     private String userId;
+    private String eventIdUserId;
     private String userName;
     private String userAvatarUrl;
     private Long requestedAt;
@@ -39,6 +40,14 @@ public class Attendance{
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    public String getEventIdUserId() {
+        return eventIdUserId;
+    }
+
+    public void setEventIdUserId(String eventIdUserId) {
+        this.eventIdUserId = eventIdUserId;
     }
 
     public String getUserName() {

@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.daimajia.swipe.SwipeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                                android:id="@+id/swipe_layout"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:layout_marginBottom="@dimen/activity_vertical_margin">
+
+    <LinearLayout
+        android:background="@android:color/transparent"
+        android:id="@+id/bottom_wrapper"
+        android:layout_width="160dp"
+        android:weightSum="1"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/approve_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:background="@android:color/transparent"
+            android:scaleType="fitCenter"
+            android:adjustViewBounds="true"
+            android:tint="@color/green"
+            android:src="@drawable/ic_check"/>
+
+        <ImageView
+            android:id="@+id/reject_iv"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_weight="1"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:background="@android:color/transparent"
+            android:tint="@color/colorRed"
+            android:src="@drawable/ic_close"/>
+    </LinearLayout>
+
+    <RelativeLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content">
+        <de.hdodenhof.circleimageview.CircleImageView
+            android:id="@+id/avatar_iv"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:src="@drawable/avatar"/>
+
+        <TextView
+            android:id="@+id/msg_tv"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/avatar_iv"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:layout_alignTop="@id/avatar_iv"
+            android:lineSpacingExtra="@dimen/text_line_space"
+            android:text="sdfsdf"/>
+
+        <View
+            android:id="@+id/divider"
+            android:layout_below="@id/msg_tv"
+            android:layout_marginTop="@dimen/activity_vertical_margin"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/dividerGrey" />
+
+    </RelativeLayout>
+</com.daimajia.swipe.SwipeLayout>
