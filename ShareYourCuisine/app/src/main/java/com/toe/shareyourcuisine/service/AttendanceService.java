@@ -147,7 +147,7 @@ public class AttendanceService {
         });
     }
 
-    public void getEventAttendancesByEventId(String eventId, final String status) {
+    public void getEventAttendancesByEventId(String eventId) {
         mAttendanceRef.orderByChild("eventId").equalTo(eventId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
@@ -155,8 +155,7 @@ public class AttendanceService {
                 for(DataSnapshot attendanceSnapShot: dataSnapshot.getChildren()) {
                     Attendance attendance = attendanceSnapShot.getValue(Attendance.class);
                     attendance.setUid(attendanceSnapShot.getKey());
-                    if(attendance.getStatus().equalsIgnoreCase(status))
-                        attendances.add(attendance);
+                    attendances.add(attendance);
                 }
                 Collections.reverse(attendances);
                 mGetEventAttendancesByEventIdListener.getEventAttendancesSucceed(attendances);

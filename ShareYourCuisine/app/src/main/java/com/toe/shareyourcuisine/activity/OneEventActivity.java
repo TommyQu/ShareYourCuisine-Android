@@ -98,7 +98,7 @@ public class OneEventActivity extends BaseActivity implements EventService.GetEv
 
         AttendanceService attendanceService = new AttendanceService(OneEventActivity.this);
         attendanceService.setGetEventAttendancesByEventIdListener(OneEventActivity.this);
-        attendanceService.getEventAttendancesByEventId(mEventId, "Approved");
+        attendanceService.getEventAttendancesByEventId(mEventId);
 
     }
 
@@ -140,13 +140,18 @@ public class OneEventActivity extends BaseActivity implements EventService.GetEv
 
     @Override
     public void getEventAttendancesSucceed(List<Attendance> attendances) {
-        mAttendances = attendances;
-        mAttendantTitleTV.setText(attendances.size() + " attendants");
+        mAttendances.clear();
+        for(Attendance attendance : attendances) {
+            if(attendance.getStatus().equalsIgnoreCase("Approved"))
+                mAttendances.add(attendance);
+        }
+        mAttendantTitleTV.setText(mAttendances.size() + " attendants");
         mAdapter = new AttendanceRecyclerViewAdapter(OneEventActivity.this, mAttendances);
         mAttendanceRV.setAdapter(mAdapter);
 
-        for(int i = 0; i < mAttendances.size(); i++) {
-            if(mAttendances.get(i).getUserId().equalsIgnoreCase(mAuth.getCurrentUser().getUid())) {
+        for(int i = 0; i < attendances.size(); i++) {
+            if(attendances.get(i).getUserId().equalsIgnoreCase(mAuth.getCurrentUser().getUid())
+                    && !attendances.get(i).getStatus().equalsIgnoreCase("Rejected")) {
                 mAttendBtn.setVisibility(View.GONE);
                 mCancelAttendanceBtn.setVisibility(View.VISIBLE);
             }
@@ -165,7 +170,7 @@ public class OneEventActivity extends BaseActivity implements EventService.GetEv
         mCancelAttendanceBtn.setVisibility(View.GONE);
         AttendanceService attendanceService = new AttendanceService(OneEventActivity.this);
         attendanceService.setGetEventAttendancesByEventIdListener(OneEventActivity.this);
-        attendanceService.getEventAttendancesByEventId(mEventId, "Approved");
+        attendanceService.getEventAttendancesByEventId(mEventId);
     }
 
     @Override

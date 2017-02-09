@@ -95,8 +95,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignLeft="@+id/time_iv"
-                android:layout_below="@id/attend_btn"
-                android:layout_marginTop="60dp"
+                android:layout_below="@id/desc_tv"
+                android:layout_marginTop="100dp"
                 android:text="12 attendants"/>
 
             <View
