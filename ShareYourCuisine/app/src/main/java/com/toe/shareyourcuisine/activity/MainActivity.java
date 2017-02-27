@@ -11,12 +11,14 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.squareup.picasso.Picasso;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.fragment.EventFragment;
@@ -36,6 +38,7 @@ public class MainActivity extends BaseActivity
     private TextView mEmailTV;
     private TextView mNameTV;
     private CircleImageView mAvatarCIV;
+    public static MaterialSearchView mSearchView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -57,7 +60,7 @@ public class MainActivity extends BaseActivity
         mEmailTV = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.email_tv);
         mNameTV = (TextView) mNavigationView.getHeaderView(0).findViewById(R.id.name_tv);
         mAvatarCIV = (CircleImageView)mNavigationView.getHeaderView(0).findViewById(R.id.avatar_civ);
-
+        mSearchView = (MaterialSearchView)findViewById(R.id.search_view);
         mAuthListener = new FirebaseAuth.AuthStateListener() {
             @Override
             public void onAuthStateChanged(@NonNull FirebaseAuth firebaseAuth) {
@@ -116,6 +119,8 @@ public class MainActivity extends BaseActivity
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         if (drawer.isDrawerOpen(GravityCompat.START)) {
             drawer.closeDrawer(GravityCompat.START);
+        } else if(mSearchView.isSearchOpen()) {
+            mSearchView.closeSearch();
         } else {
             super.onBackPressed();
         }
@@ -123,9 +128,10 @@ public class MainActivity extends BaseActivity
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.main, menu);
-        return true;
+        MenuItem menuItem = menu.findItem(R.id.action_search);
+        mSearchView.setMenuItem(menuItem);
+        return false;
     }
 
     @Override
@@ -178,5 +184,6 @@ public class MainActivity extends BaseActivity
         drawer.closeDrawer(GravityCompat.START);
         return true;
     }
+
 
 }

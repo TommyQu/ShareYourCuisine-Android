@@ -16,6 +16,7 @@ import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.toe.shareyourcuisine.model.Event;
 import com.toe.shareyourcuisine.model.Post;
+import com.toe.shareyourcuisine.model.Recipe;
 import com.toe.shareyourcuisine.model.User;
 
 import java.io.File;
@@ -40,6 +41,7 @@ public class EventService {
     private CreateEventListener mCreateEventListener;
     private GetAllEventsListener mGetAllEventsListener;
     private GetEventByIdListener mGetEventByIdListener;
+    private GetEventsByNameListener mGetEventsByNameListener;
     private Context mContext;
     private Event mEventToCreate;
 
@@ -58,6 +60,11 @@ public class EventService {
         public void getEventByIdFail(String errorMsg);
     }
 
+    public interface GetEventsByNameListener {
+        public void getEventsByNameSucceed(List<Event> events);
+        public void getEventsByNameFail(String errorMsg);
+    }
+
     public EventService(Context context) {
         mContext = context;
         mFirebaseDatabase = FirebaseDatabase.getInstance();
@@ -73,6 +80,10 @@ public class EventService {
 
     public void setGetEventByIdListener(GetEventByIdListener getEventByIdListener) {
         mGetEventByIdListener = getEventByIdListener;
+    }
+
+    public void setGetEventsByNameListener(GetEventsByNameListener getEventsByNameListener) {
+        mGetEventsByNameListener = getEventsByNameListener;
     }
 
     public void createEvent(Event event) {
@@ -150,6 +161,28 @@ public class EventService {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 mGetEventByIdListener.getEventByIdFail(databaseError.getMessage());
+            }
+        });
+    }
+
+    public void getEventsByName(String name) {
+        DatabaseReference eventRef = mFirebaseDatabase.getReference("event");
+        eventRef.orderByChild("title").startAt(name).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Event> events = new ArrayList<Event>();
+                for(DataSnapshot eventSnapShot: dataSnapshot.getChildren()) {
+                    Event event = eventSnapShot.getValue(Event.class);
+                    event.setUid(eventSnapShot.getKey());
+                    events.add(event);
+                }
+                Collections.reverse(events);
+                mGetEventsByNameListener.getEventsByNameSucceed(events);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mGetEventsByNameListener.getEventsByNameFail(databaseError.getMessage());
             }
         });
     }

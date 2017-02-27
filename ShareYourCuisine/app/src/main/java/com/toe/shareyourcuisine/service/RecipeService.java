@@ -10,10 +10,12 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
+import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
@@ -48,6 +50,8 @@ public class RecipeService {
     private CreateNewRecipeListener mCreateNewRecipeListener;
     private GetAllRecipesListener mGetAllRecipesListener;
     private RateRecipeListener mRateRecipeListener;
+    private GetRecipesByNameListener mGetRecipesByNameListener;
+    public DeleteRecipeListener mDeleteRecipeListener;
     private Recipe mRecipeToCreate;
     private Context mContext;
 
@@ -66,6 +70,16 @@ public class RecipeService {
         public void rateRecipeFail(String errorMsg);
     }
 
+    public interface GetRecipesByNameListener {
+        public void getRecipesByNameSucceed(List<Recipe> recipes);
+        public void getRecipesByNameFail(String errorMsg);
+    }
+
+    public interface DeleteRecipeListener {
+        public void deleteRecipeSucceed();
+        public void deleteRecipeFail(String errorMsg);
+    }
+
     public void setCreateNewRecipeListener(CreateNewRecipeListener createNewRecipeListener) {
         mCreateNewRecipeListener = createNewRecipeListener;
     }
@@ -76,6 +90,14 @@ public class RecipeService {
 
     public void setRateRecipeListener(RateRecipeListener rateRecipeListener) {
         mRateRecipeListener = rateRecipeListener;
+    }
+
+    public void setGetRecipesByNameListener(GetRecipesByNameListener getRecipesByNameListener) {
+        mGetRecipesByNameListener = getRecipesByNameListener;
+    }
+
+    public void setDeleteRecipeListener(DeleteRecipeListener deleteRecipeListener) {
+        mDeleteRecipeListener = deleteRecipeListener;
     }
 
     public RecipeService(Context context) {
@@ -197,5 +219,82 @@ public class RecipeService {
 
     }
 
+    public void getRecipesByName(String name) {
+        mRecipeRef.orderByChild("title").startAt(name).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                List<Recipe> recipes = new ArrayList<Recipe>();
+                for(DataSnapshot recipeSnapShot: dataSnapshot.getChildren()) {
+                    Recipe recipe = recipeSnapShot.getValue(Recipe.class);
+                    recipe.setUid(recipeSnapShot.getKey());
+                    recipes.add(recipe);
+                }
+                Collections.reverse(recipes);
+                mGetRecipesByNameListener.getRecipesByNameSucceed(recipes);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mGetRecipesByNameListener.getRecipesByNameFail(databaseError.getMessage());
+            }
+        });
+    }
+
+    public void deleteRecipe(final String uid) {
+        mRecipeRef.child(uid).removeValue(new DatabaseReference.CompletionListener() {
+            @Override
+            public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                if(databaseError != null)
+                    mDeleteRecipeListener.deleteRecipeFail(databaseError.getMessage());
+                else
+                    deleteRecipeImgs(uid);
+            }
+        });
+    }
+
+    //Todo: Delete all recipe images
+    public void deleteRecipeImgs(final String uid) {
+        mStorageRef.child("images/recipe/" + uid).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+            @Override
+            public void onSuccess(Void aVoid) {
+                deleteRecipeComment(uid);
+            }
+        }).addOnFailureListener(new OnFailureListener() {
+            @Override
+            public void onFailure(@NonNull Exception e) {
+                mDeleteRecipeListener.deleteRecipeFail(e.getMessage());
+            }
+        });
+    }
+
+    public void deleteRecipeComment(String uid) {
+        DatabaseReference commentRef = mFirebaseDatabase.getReference("comment");
+        commentRef.orderByChild("parentId").equalTo(uid).removeEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+    }
 
 }

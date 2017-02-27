@@ -5,7 +5,9 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
@@ -37,7 +39,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by HQu on 12/19/2016.
  */
 
-public class OneRecipeActivity extends BaseActivity implements RecipeService.RateRecipeListener, CommentService.CreateCommentListener, CommentService.GetCommentsByParentIdListener {
+public class OneRecipeActivity extends BaseActivity implements RecipeService.RateRecipeListener, CommentService.CreateCommentListener, CommentService.GetCommentsByParentIdListener, RecipeService.DeleteRecipeListener {
 
     private ImageView mDisplayImgIV;
     private CircleImageView mCreatedUserAvatarIV;
@@ -53,10 +55,13 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
     private LayoutInflater mContentImgLayoutInflater;
     private Button mRateBtn;
     private Button mCommentBtn;
+    private Button mFavoriteBtn;
     private CommentRecyclerViewAdapter mCommentAdapter;
     private RecyclerView mCommentsRV;
     private MaterialDialog mProgressDialog;
+    private MaterialDialog mConfirmDialog;
     private Recipe mRecipe;
+    private RecipeService mRecipeService;
 
     private static final String TAG = "ToeOneRecipeActivity:";
     @Override
@@ -65,6 +70,7 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         setContentView(R.layout.activity_one_recipe);
         mRecipe = Parcels.unwrap(getIntent().getParcelableExtra("recipe"));
+        mRecipeService = new RecipeService(OneRecipeActivity.this);
 
         mDisplayImgIV = (ImageView)findViewById(R.id.display_img_iv);
         mCreatedUserAvatarIV = (CircleImageView) findViewById(R.id.created_user_avatar_iv);
@@ -80,6 +86,7 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
         mContentImgLayoutInflater = LayoutInflater.from(OneRecipeActivity.this);
         mRateBtn = (Button)findViewById(R.id.rate_btn);
         mCommentBtn = (Button)findViewById(R.id.comment_btn);
+        mFavoriteBtn = (Button)findViewById(R.id.favorite_btn);
         mCommentsRV = (RecyclerView)findViewById(R.id.comments_rv);
         mCommentsRV.setLayoutManager(new LinearLayoutManager(OneRecipeActivity.this));
 
@@ -135,9 +142,8 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
                                         Toast.makeText(OneRecipeActivity.this, "You have already rated this recipe", Toast.LENGTH_LONG).show();
                                     else {
                                         mRecipe.getRatedBy().add(mAuth.getCurrentUser().getUid());
-                                        RecipeService recipeService = new RecipeService(OneRecipeActivity.this);
-                                        recipeService.setRateRecipeListener(OneRecipeActivity.this);
-                                        recipeService.rateRecipe(mRecipe.getUid(), mAuth.getCurrentUser().getUid(), rating);
+                                        mRecipeService.setRateRecipeListener(OneRecipeActivity.this);
+                                        mRecipeService.rateRecipe(mRecipe.getUid(), mAuth.getCurrentUser().getUid(), rating);
                                     }
                                 }
                             }).build();
@@ -183,9 +189,23 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
             }
         });
 
+        mFavoriteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+            }
+        });
+
         CommentService commentService = new CommentService(OneRecipeActivity.this);
         commentService.setGetCommentsByParentIdListener(OneRecipeActivity.this);
         commentService.getCommentsByParentId(mRecipe.getUid());
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        if(mAuth.getCurrentUser() != null && mAuth.getCurrentUser().getUid().equals(mRecipe.getCreatedUserId()))
+            getMenuInflater().inflate(R.menu.delete_edit, menu);
+        return super.onCreateOptionsMenu(menu);
     }
 
     @Override
@@ -193,6 +213,26 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
         switch (item.getItemId()) {
             case android.R.id.home:
                 finish();
+                return true;
+            case R.id.action_delete:
+                mConfirmDialog = new MaterialDialog.Builder(this)
+                        .title("Delete")
+                        .content("Are you sure to delete this recipe?")
+                        .positiveText("Yes")
+                        .negativeText("No")
+                        .onPositive(new MaterialDialog.SingleButtonCallback() {
+                            @Override
+                            public void onClick(@NonNull MaterialDialog dialog, @NonNull DialogAction which) {
+                                mProgressDialog= new MaterialDialog.Builder(OneRecipeActivity.this)
+                                        .title("Deleting recipe")
+                                        .content("Please wait")
+                                        .progress(true, 0)
+                                        .show();
+                                mRecipeService.setDeleteRecipeListener(OneRecipeActivity.this);
+//                                mRecipeService.deleteRecipe(mRecipe.getUid());
+                            }
+                        })
+                        .show();
                 return true;
         }
         return super.onOptionsItemSelected(item);
@@ -231,6 +271,19 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
 
     @Override
     public void getCommentsByParentIdFail(String errorMsg) {
+        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void deleteRecipeSucceed() {
+        mProgressDialog.dismiss();
+        Toast.makeText(this, "Delete recipe successfully", Toast.LENGTH_LONG).show();
+        finish();
+    }
+
+    @Override
+    public void deleteRecipeFail(String errorMsg) {
+        mProgressDialog.dismiss();
         Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
     }
 }

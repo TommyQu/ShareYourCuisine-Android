@@ -5,6 +5,7 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.support.annotation.NonNull;
+import android.util.Log;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -46,7 +47,8 @@ public class UserService {
     private Context mContext;
     private SignInListener mSignInListener;
     private RegisterListener mRegisterListener;
-    private GetUserInfoListener mGetUserInfoListener;
+    private GetUserInfoByEmailListener mGetUserInfoByEmailListener;
+    private UpdateProfileListener mUpdateProfileListener;
 
     private User mUserToRegister;
 
@@ -60,9 +62,14 @@ public class UserService {
         public void registerFail(String errorMsg);
     }
 
-    public interface GetUserInfoListener {
-        public void getUserInfoSucceed(User user);
-        public void getUserInfoFail(String errorMsg);
+    public interface GetUserInfoByEmailListener {
+        public void getUserInfoByEmailSucceed(User user);
+        public void getUserInfoByEmailFail(String errorMsg);
+    }
+
+    public interface UpdateProfileListener {
+        public void updateProfileSucceed();
+        public void updateProfileFail(String errorMsg);
     }
 
     public UserService(Context context) {
@@ -79,8 +86,12 @@ public class UserService {
         mRegisterListener = registerListener;
     }
 
-    public void setUserInfoListener(GetUserInfoListener getUserInfoListener) {
-        mGetUserInfoListener = getUserInfoListener;
+    public void setGetUserInfoByEmailListener (GetUserInfoByEmailListener getUserInfoByEmailListener) {
+        mGetUserInfoByEmailListener = getUserInfoByEmailListener;
+    }
+
+    public void setUpdateProfileListener (UpdateProfileListener updateProfileListener) {
+        mUpdateProfileListener = updateProfileListener;
     }
 
     public void signIn(final String email, String pwd) {
@@ -96,6 +107,22 @@ public class UserService {
                         }
                     }
                 });
+    }
+
+    public void getUserInfoByEmailListener (final String email) {
+        DatabaseReference userRef = mFirebaseDatabase.getReference("user");
+        userRef.orderByChild("email").startAt(email).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                User user = dataSnapshot.getChildren().iterator().next().getValue(User.class);
+                mGetUserInfoByEmailListener.getUserInfoByEmailSucceed(user);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mGetUserInfoByEmailListener.getUserInfoByEmailFail(databaseError.getMessage());
+            }
+        });
     }
 
 //    public void getUserInfo(String uid, String action) {
@@ -208,4 +235,16 @@ public class UserService {
                 });
     }
 
+    public void updateProfile(String newBio) {
+        final DatabaseReference userRef = mFirebaseDatabase.getReference("user");
+        userRef.child(mAuth.getCurrentUser().getUid()).child("bio").setValue(newBio).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.getException() != null)
+                    mUpdateProfileListener.updateProfileFail(task.getException().getMessage());
+                else
+                    mUpdateProfileListener.updateProfileSucceed();
+            }
+        });
+    }
 }

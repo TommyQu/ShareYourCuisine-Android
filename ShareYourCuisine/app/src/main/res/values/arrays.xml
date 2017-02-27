@@ -14,4 +14,15 @@
         <item>Umami</item>
         <item>Spicy</item>
     </string-array>
+    <string-array name="query_suggestions">
+        <item>Android</item>
+        <item>AOS</item>
+        <item>ACALA</item>
+        <item>Buby</item>
+        <item>BvaScript</item>
+    </string-array>
+    <string-array name="suggestions">
+        <item>A</item>
+        <item>i</item>
+    </string-array>
 </resources>

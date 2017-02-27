@@ -14,21 +14,27 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.miguelcatalan.materialsearchview.MaterialSearchView;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.activity.CreateEventActivity;
+import com.toe.shareyourcuisine.activity.EventResultActivity;
 import com.toe.shareyourcuisine.activity.MainActivity;
 import com.toe.shareyourcuisine.activity.OneEventActivity;
+import com.toe.shareyourcuisine.activity.RecipeResultActivity;
 import com.toe.shareyourcuisine.adapter.EventRecyclerViewAdapter;
 import com.toe.shareyourcuisine.model.Event;
+import com.toe.shareyourcuisine.model.Recipe;
 import com.toe.shareyourcuisine.service.EventService;
+import com.toe.shareyourcuisine.service.RecipeService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
  * Created by HQu on 12/27/2016.
  */
 
-public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, EventService.GetAllEventsListener {
+public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, EventService.GetAllEventsListener, EventService.GetEventsByNameListener {
 
     private static final String TAG = "ToeEventFragment:";
     private RecyclerView mEventRV;
@@ -40,6 +46,8 @@ public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.fragment_event, container, false);
+        setHasOptionsMenu(true);
+        MainActivity.mSearchView.setSuggestions(getResources().getStringArray(R.array.suggestions));
         mEventRV = (RecyclerView)rootView.findViewById(R.id.event_rv);
         mEventRV.setLayoutManager(new LinearLayoutManager(getActivity()));
         mEventSRL = (SwipeRefreshLayout)rootView.findViewById(R.id.event_srl);
@@ -60,6 +68,21 @@ public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefr
         mEventSRL.setOnRefreshListener(this);
         mEventSRL.setColorSchemeColors(ContextCompat.getColor(getActivity(), R.color.colorRed), ContextCompat.getColor(getActivity(), R.color.colorAccent), ContextCompat.getColor(getActivity(), R.color.colorOrange));
         getAllEvents();
+        MainActivity.mSearchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                Intent intent = new Intent(getActivity(), EventResultActivity.class);
+                intent.putExtra("query", query);
+                startActivity(intent);
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                getEventsByName(newText);
+                return false;
+            }
+        });
         return rootView;
     }
 
@@ -95,6 +118,27 @@ public class EventFragment extends Fragment implements SwipeRefreshLayout.OnRefr
     @Override
     public void getAllEventsFail(String errorMsg) {
         mEventSRL.setRefreshing(false);
+        Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
+    }
+
+    public void getEventsByName(String name) {
+        EventService eventService = new EventService(getActivity());
+        eventService.setGetEventsByNameListener(this);
+        eventService.getEventsByName(name);
+    }
+
+    @Override
+    public void getEventsByNameSucceed(List<Event> events) {
+        List<String> namesList = new ArrayList<>();
+        for(Event event: events) {
+            namesList.add(event.getTitle());
+        }
+        String[] names = namesList.toArray(new String[0]);
+        MainActivity.mSearchView.setSuggestions(names);
+    }
+
+    @Override
+    public void getEventsByNameFail(String errorMsg) {
         Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
     }
 }

@@ -1,181 +1,206 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView  xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:app="http://schemas.android.com/apk/res-auto"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:scrollbars="none">
-    <RelativeLayout android:layout_width="match_parent"
-                    android:layout_height="match_parent">
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:app="http://schemas.android.com/apk/res-auto"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" >
+    <ScrollView  android:layout_width="match_parent"
+                 android:layout_height="match_parent"
+                 android:layout_above="@+id/footer"
+                 android:scrollbars="none"
+                 android:fillViewport="true">
+        <RelativeLayout android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-        <View
-            android:id="@+id/center_shim"
-            android:layout_height="match_parent"
-            android:layout_width="50dp"
-            android:visibility="invisible"
-            android:layout_centerHorizontal="true"/>
+            <View
+                android:id="@+id/center_shim"
+                android:layout_height="match_parent"
+                android:layout_width="50dp"
+                android:visibility="invisible"
+                android:layout_centerHorizontal="true"/>
 
-        <ImageView
-            android:id="@+id/display_img_iv"
-            android:layout_width="match_parent"
-            android:layout_height="300dp" />
+            <ImageView
+                android:id="@+id/display_img_iv"
+                android:layout_width="match_parent"
+                android:layout_height="300dp" />
 
-        <TextView
-            android:id="@+id/title_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/display_img_iv"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_centerHorizontal="true"
-            android:textSize="25dp"/>
-
-        <com.iarcuschin.simpleratingbar.SimpleRatingBar
-            android:id="@+id/rating_srb"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title_tv"
-            android:layout_toLeftOf="@id/center_shim"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            app:srb_isIndicator="true"
-            app:srb_starSize="20dp"
-            app:srb_numberOfStars="5"
-            app:srb_stepSize="0.5"/>
-
-        <TextView
-            android:id="@+id/rated_users_num_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/title_tv"
-            android:layout_toRightOf="@id/center_shim"
-            android:layout_marginTop="@dimen/activity_vertical_margin"/>
-
-        <de.hdodenhof.circleimageview.CircleImageView
-            android:id="@+id/created_user_avatar_iv"
-            android:layout_width="80dp"
-            android:layout_height="80dp"
-            android:layout_below="@id/rating_srb"
-            android:layout_marginTop="30dp"
-            android:layout_centerHorizontal="true"/>
-
-        <TextView
-            android:id="@+id/created_user_name_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_below="@id/created_user_avatar_iv"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_centerHorizontal="true"/>
-
-        <TextView
-            android:id="@+id/flavor_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/created_user_name_tv"
-            android:layout_marginTop="30dp"
-            android:layout_toLeftOf="@id/center_shim"
-            android:textColor="@color/textGrey"/>
-
-        <ImageView
-            android:id="@+id/flavor_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="22dp"
-            android:layout_below="@id/created_user_name_tv"
-            android:layout_marginTop="30dp"
-            android:layout_toLeftOf="@id/flavor_tv"
-            android:src="@drawable/ic_action_emo_tongue"
-            android:tint="@color/textGrey"/>
-
-        <ImageView
-            android:id="@+id/cooking_time_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="22dp"
-            android:layout_below="@id/created_user_name_tv"
-            android:layout_marginTop="30dp"
-            android:layout_toRightOf="@id/center_shim"
-            android:src="@drawable/ic_action_alarm"
-            android:tint="@color/textGrey"/>
-
-        <TextView
-            android:id="@+id/cooking_time_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/created_user_name_tv"
-            android:layout_marginTop="30dp"
-            android:layout_toRightOf="@id/cooking_time_iv"
-            android:layout_marginLeft="5dp"
-            android:textColor="@color/textGrey"/>
-
-        <TextView
-            android:id="@+id/content_tv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/cooking_time_iv"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"
-            android:textSize="20dp"/>
-
-        <ImageView
-            android:id="@+id/selected_img_iv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/content_tv"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_centerHorizontal="true"/>
-
-        <HorizontalScrollView
-            android:id="@+id/content_img_hsv"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/selected_img_iv">
-
-            <LinearLayout
-                android:id="@+id/content_img_layout"
+            <TextView
+                android:id="@+id/title_tv"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_vertical"
-                android:orientation="horizontal">
-            </LinearLayout>
-        </HorizontalScrollView>
+                android:layout_below="@id/display_img_iv"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_centerHorizontal="true"
+                android:textSize="25dp"/>
+
+            <com.iarcuschin.simpleratingbar.SimpleRatingBar
+                android:id="@+id/rating_srb"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title_tv"
+                android:layout_toLeftOf="@id/center_shim"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                app:srb_isIndicator="true"
+                app:srb_starSize="20dp"
+                app:srb_numberOfStars="5"
+                app:srb_stepSize="0.5"/>
+
+            <TextView
+                android:id="@+id/rated_users_num_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/title_tv"
+                android:layout_toRightOf="@id/center_shim"
+                android:layout_marginTop="@dimen/activity_vertical_margin"/>
+
+            <de.hdodenhof.circleimageview.CircleImageView
+                android:id="@+id/created_user_avatar_iv"
+                android:layout_width="80dp"
+                android:layout_height="80dp"
+                android:layout_below="@id/rating_srb"
+                android:layout_marginTop="30dp"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/created_user_name_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_below="@id/created_user_avatar_iv"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_centerHorizontal="true"/>
+
+            <TextView
+                android:id="@+id/flavor_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/created_user_name_tv"
+                android:layout_marginTop="30dp"
+                android:layout_toLeftOf="@id/center_shim"
+                android:textColor="@color/textGrey"/>
+
+            <ImageView
+                android:id="@+id/flavor_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:layout_below="@id/created_user_name_tv"
+                android:layout_marginTop="30dp"
+                android:layout_toLeftOf="@id/flavor_tv"
+                android:src="@drawable/ic_action_emo_tongue"
+                android:tint="@color/textGrey"/>
+
+            <ImageView
+                android:id="@+id/cooking_time_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="22dp"
+                android:layout_below="@id/created_user_name_tv"
+                android:layout_marginTop="30dp"
+                android:layout_toRightOf="@id/center_shim"
+                android:src="@drawable/ic_action_alarm"
+                android:tint="@color/textGrey"/>
+
+            <TextView
+                android:id="@+id/cooking_time_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/created_user_name_tv"
+                android:layout_marginTop="30dp"
+                android:layout_toRightOf="@id/cooking_time_iv"
+                android:layout_marginLeft="5dp"
+                android:textColor="@color/textGrey"/>
+
+            <TextView
+                android:id="@+id/content_tv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/cooking_time_iv"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"
+                android:textSize="20dp"/>
+
+            <ImageView
+                android:id="@+id/selected_img_iv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/content_tv"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_centerHorizontal="true"/>
+
+            <HorizontalScrollView
+                android:id="@+id/content_img_hsv"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/selected_img_iv">
+
+                <LinearLayout
+                    android:id="@+id/content_img_layout"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:orientation="horizontal">
+                </LinearLayout>
+            </HorizontalScrollView>
+
+
+            <TextView
+                android:id="@+id/comment_title_tv"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/content_img_hsv"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:text="Comments:"/>
+
+            <android.support.v7.widget.RecyclerView
+                android:id="@+id/comments_rv"
+                android:scrollbars="none"
+                android:layout_below="@id/comment_title_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginTop="@dimen/activity_vertical_margin"
+                android:layout_marginBottom="@dimen/activity_vertical_margin"/>
+        </RelativeLayout>
+
+    </ScrollView>
+    <LinearLayout
+        android:id="@+id/footer"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:padding="2dp"
+        android:background="@drawable/edittext_background"
+        android:orientation="horizontal">
 
         <Button
             android:id="@+id/rate_btn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/content_img_hsv"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_toLeftOf="@id/center_shim"
+            android:layout_height="50dp"
+            android:layout_weight="1"
             android:text="Rate"
-            style="@style/PrimaryButton"/>
+            android:drawableLeft="@drawable/ic_bottom_star"
+            android:paddingLeft="20dp"
+            android:paddingRight="20dp"
+            style="@style/SubButton"/>
 
         <Button
             android:id="@+id/comment_btn"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/content_img_hsv"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginRight="@dimen/activity_horizontal_margin"
-            android:layout_toRightOf="@id/center_shim"
+            android:layout_height="50dp"
+            android:layout_weight="1"
             android:text="Comment"
+            android:drawableLeft="@drawable/ic_bottom_comment"
+            android:gravity="center"
             style="@style/SubButton"/>
 
-        <TextView
-            android:id="@+id/comment_title_tv"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@id/rate_btn"
-            android:layout_marginTop="60dp"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:text="Comments:"/>
-
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/comments_rv"
-            android:scrollbars="none"
-            android:layout_below="@id/comment_title_tv"
+        <Button
+            android:id="@+id/favorite_btn"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/activity_horizontal_margin"
-            android:layout_marginTop="@dimen/activity_vertical_margin"
-            android:layout_marginBottom="@dimen/activity_vertical_margin"/>
-    </RelativeLayout>
-</ScrollView>
+            android:layout_height="50dp"
+            android:layout_weight="1"
+            android:text="Favorite"
+            android:drawableLeft="@drawable/ic_bottom_favorite"
+            android:paddingLeft="10dp"
+            style="@style/SubButton"/>
+    </LinearLayout>
+</RelativeLayout>
