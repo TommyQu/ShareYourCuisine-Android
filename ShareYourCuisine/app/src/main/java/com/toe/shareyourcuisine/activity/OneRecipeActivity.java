@@ -25,8 +25,10 @@ import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.adapter.CommentRecyclerViewAdapter;
 import com.toe.shareyourcuisine.libs.RatingDialog;
 import com.toe.shareyourcuisine.model.Comment;
+import com.toe.shareyourcuisine.model.Favorite;
 import com.toe.shareyourcuisine.model.Recipe;
 import com.toe.shareyourcuisine.service.CommentService;
+import com.toe.shareyourcuisine.service.FavoriteService;
 import com.toe.shareyourcuisine.service.RecipeService;
 
 import org.parceler.Parcels;
@@ -39,7 +41,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
  * Created by HQu on 12/19/2016.
  */
 
-public class OneRecipeActivity extends BaseActivity implements RecipeService.RateRecipeListener, CommentService.CreateCommentListener, CommentService.GetCommentsByParentIdListener, RecipeService.DeleteRecipeListener {
+public class OneRecipeActivity extends BaseActivity implements RecipeService.RateRecipeListener, CommentService.CreateCommentListener, CommentService.GetCommentsByParentIdListener, RecipeService.DeleteRecipeListener, FavoriteService.CreateFavoriteListener, FavoriteService.GetFavoritesByUserIdListener, FavoriteService.DeleteFavoriteListener {
 
     private ImageView mDisplayImgIV;
     private CircleImageView mCreatedUserAvatarIV;
@@ -62,6 +64,7 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
     private MaterialDialog mConfirmDialog;
     private Recipe mRecipe;
     private RecipeService mRecipeService;
+    private String mFavoriteId;
 
     private static final String TAG = "ToeOneRecipeActivity:";
     @Override
@@ -192,13 +195,29 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
         mFavoriteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                if(mAuth.getCurrentUser() != null) {
+                    FavoriteService favoriteService = new FavoriteService();
+                    if(mFavoriteId != null && mFavoriteId != "") {
+                        favoriteService.setDeleteFavoriteListener(OneRecipeActivity.this);
+                        favoriteService.deleteFavorite(mFavoriteId);
+                    } else {
+                        favoriteService.setCreateFavoriteListener(OneRecipeActivity.this);
+                        favoriteService.createFavorite(mAuth.getCurrentUser().getUid(), mRecipe);
+                    }
 
+                } else {
+                    Toast.makeText(OneRecipeActivity.this, "Please log in!", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 
         CommentService commentService = new CommentService(OneRecipeActivity.this);
         commentService.setGetCommentsByParentIdListener(OneRecipeActivity.this);
         commentService.getCommentsByParentId(mRecipe.getUid());
+
+        FavoriteService favoriteService = new FavoriteService();
+        favoriteService.setGetFavoritesByUserIdListener(OneRecipeActivity.this);
+        favoriteService.getFavoritesByUserId(mAuth.getCurrentUser().getUid());
     }
 
     @Override
@@ -229,7 +248,7 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
                                         .progress(true, 0)
                                         .show();
                                 mRecipeService.setDeleteRecipeListener(OneRecipeActivity.this);
-//                                mRecipeService.deleteRecipe(mRecipe.getUid());
+                                mRecipeService.deleteRecipe(mRecipe.getUid(), mRecipe.getDisplayImgUrl(), mRecipe.getContentImgUrls());
                             }
                         })
                         .show();
@@ -284,6 +303,49 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
     @Override
     public void deleteRecipeFail(String errorMsg) {
         mProgressDialog.dismiss();
+        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void createFavoriteSucceed(String favoriteId) {
+        Toast.makeText(this, "Add to favorite successfully!", Toast.LENGTH_LONG).show();
+        mFavoriteBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bottom_favorited, 0,0,0);
+        mFavoriteBtn.setText("Favorited");
+        mFavoriteId = favoriteId;
+    }
+
+    @Override
+    public void createFavoriteFail(String errorMsg) {
+        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void getFavoritesByUserIdSucceed(List<Favorite> favorites) {
+        for(Favorite favorite: favorites) {
+            if(favorite.getRecipe().getUid().equalsIgnoreCase(mRecipe.getUid())) {
+                mFavoriteBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bottom_favorited, 0,0,0);
+                mFavoriteBtn.setText("Favorited");
+                mFavoriteId = favorite.getUid();
+                break;
+            }
+        }
+    }
+
+    @Override
+    public void getFavoritesByUserIdFail(String errorMsg) {
+        Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void deleteFavoriteSucceed() {
+        mFavoriteBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bottom_favorite, 0,0,0);
+        mFavoriteBtn.setText("Favorite");
+        mFavoriteId = null;
+        Toast.makeText(this, "Remove favorite successfully", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void deleteFavoriteFail(String errorMsg) {
         Toast.makeText(this, errorMsg, Toast.LENGTH_LONG).show();
     }
 }

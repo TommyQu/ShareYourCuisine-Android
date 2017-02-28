@@ -240,21 +240,25 @@ public class RecipeService {
         });
     }
 
-    public void deleteRecipe(final String uid) {
+    public void deleteRecipe(final String uid, final String displayImgUrl, final List<String> contentImgUrls) {
         mRecipeRef.child(uid).removeValue(new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if(databaseError != null)
                     mDeleteRecipeListener.deleteRecipeFail(databaseError.getMessage());
                 else
-                    deleteRecipeImgs(uid);
+                    deleteRecipeImgs(uid, displayImgUrl, contentImgUrls);
             }
         });
     }
 
-    //Todo: Delete all recipe images
-    public void deleteRecipeImgs(final String uid) {
-        mStorageRef.child("images/recipe/" + uid).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
+    public void deleteRecipeImgs(final String uid, final String displayImgUrl, final List<String> contentImgUrls) {
+        mFirebaseStorage = FirebaseStorage.getInstance();
+        mStorageRef = mFirebaseStorage.getReferenceFromUrl("gs://shareyourcuisine.appspot.com");
+        for(String str: contentImgUrls) {
+            mStorageRef.child(Uri.parse(str).getLastPathSegment()).delete();
+        }
+        mStorageRef.child(Uri.parse(displayImgUrl).getLastPathSegment()).delete().addOnSuccessListener(new OnSuccessListener<Void>() {
             @Override
             public void onSuccess(Void aVoid) {
                 deleteRecipeComment(uid);
@@ -269,30 +273,18 @@ public class RecipeService {
 
     public void deleteRecipeComment(String uid) {
         DatabaseReference commentRef = mFirebaseDatabase.getReference("comment");
-        commentRef.orderByChild("parentId").equalTo(uid).removeEventListener(new ChildEventListener() {
+        commentRef.orderByChild("parentId").equalTo(uid).addValueEventListener(new ValueEventListener() {
             @Override
-            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
-
-            }
-
-            @Override
-            public void onChildRemoved(DataSnapshot dataSnapshot) {
-
-            }
-
-            @Override
-            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
-
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                for(DataSnapshot commentSnapshot: dataSnapshot.getChildren()) {
+                    commentSnapshot.getRef().removeValue();
+                }
+                mDeleteRecipeListener.deleteRecipeSucceed();
             }
 
             @Override
             public void onCancelled(DatabaseError databaseError) {
-
+                mDeleteRecipeListener.deleteRecipeFail(databaseError.getMessage());
             }
         });
     }

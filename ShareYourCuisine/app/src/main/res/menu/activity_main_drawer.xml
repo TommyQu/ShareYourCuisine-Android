@@ -14,10 +14,10 @@
             android:id="@+id/nav_post"
             android:icon="@drawable/ic_action_news"
             android:title="Post"/>
-        <item
-            android:id="@+id/nav_event"
-            android:icon="@drawable/ic_local_bar"
-            android:title="Event"/>
+        <!--<item-->
+            <!--android:id="@+id/nav_event"-->
+            <!--android:icon="@drawable/ic_local_bar"-->
+            <!--android:title="Event"/>-->
     </group>
 
     <item android:title="Submenu">
@@ -26,10 +26,14 @@
                 android:id="@+id/nav_sign_in"
                 android:icon="@drawable/ic_action_import"
                 android:title="Sign In"/>
+            <!--<item-->
+                <!--android:id="@+id/nav_msg"-->
+                <!--android:icon="@drawable/ic_message"-->
+                <!--android:title="Message"/>-->
             <item
-                android:id="@+id/nav_msg"
-                android:icon="@drawable/ic_message"
-                android:title="Message"/>
+                android:id="@+id/nav_favorite"
+                android:icon="@drawable/ic_bottom_favorite"
+                android:title="Favorite"/>
             <item
                 android:id="@+id/nav_profile"
                 android:icon="@drawable/ic_action_user"

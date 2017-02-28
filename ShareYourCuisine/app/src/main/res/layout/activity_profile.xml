@@ -24,7 +24,7 @@
         android:layout_marginTop="@dimen/activity_vertical_margin"
         app:met_floatingLabel="highlight"
         android:inputType="textEmailAddress"
-        android:focusable="false"/>
+        android:enabled="false"/>
 
     <View
         android:id="@+id/center_shim"
@@ -42,7 +42,7 @@
         android:layout_toLeftOf="@id/center_shim"
         android:hint="First Name:"
         app:met_floatingLabel="highlight"
-        android:focusable="false"/>
+        android:enabled="false"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/lname_et"
@@ -53,7 +53,7 @@
         android:layout_alignParentRight="true"
         android:hint="Last Name:"
         app:met_floatingLabel="highlight"
-        android:focusable="false"/>
+        android:enabled="false"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/dob_et"
@@ -63,7 +63,7 @@
         android:hint="Date of birth: (Month/Day/Year)"
         android:focusableInTouchMode="false"
         app:met_floatingLabel="highlight"
-        android:focusable="false"/>
+        android:enabled="false"/>
 
     <com.rengwuxian.materialedittext.MaterialEditText
         android:id="@+id/bio_et"
