@@ -70,6 +70,7 @@ public class MainActivity extends BaseActivity
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(false);
                     mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(true);
                     mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(true);
+                    mNavigationView.getMenu().findItem(R.id.nav_favorite).setVisible(true);
                     try {
 //                        User user = User.find(User.class, "email = ?", mFirebaseUser.getEmail()).get(0);
                         Picasso.with(MainActivity.this).load(mAuth.getCurrentUser().getPhotoUrl()).into(mAvatarCIV);
@@ -85,6 +86,7 @@ public class MainActivity extends BaseActivity
                     mNavigationView.getMenu().findItem(R.id.nav_sign_in).setVisible(true);
                     mNavigationView.getMenu().findItem(R.id.nav_sign_out).setVisible(false);
                     mNavigationView.getMenu().findItem(R.id.nav_profile).setVisible(false);
+                    mNavigationView.getMenu().findItem(R.id.nav_favorite).setVisible(false);
 //                    mNavigationView.getMenu().findItem(R.id.nav_msg).setVisible(false);
                     Picasso.with(MainActivity.this).load(R.drawable.avatar).into(mAvatarCIV);
                     mEmailTV.setText("");
@@ -154,7 +156,6 @@ public class MainActivity extends BaseActivity
     public boolean onNavigationItemSelected(MenuItem item) {
         // Handle navigation view item clicks here.
         int id = item.getItemId();
-
         if (id == R.id.nav_home) {
             getSupportFragmentManager().beginTransaction().replace(R.id.content, new HomeFragment()).commit();
             setTitle(item.getTitle());
@@ -179,6 +180,9 @@ public class MainActivity extends BaseActivity
 //        } else if (id == R.id.nav_msg) {
 //            Intent intent = new Intent(MainActivity.this, MessageActivity.class);
 //            startActivity(intent);
+        } else if (id == R.id.nav_favorite) {
+            Intent intent = new Intent(MainActivity.this, FavoriteActivity.class);
+            startActivity(intent);
         }
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);

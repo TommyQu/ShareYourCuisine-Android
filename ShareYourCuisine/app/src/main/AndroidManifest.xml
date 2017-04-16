@@ -47,6 +47,11 @@
             android:label="Profile"
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name=".activity.FavoriteActivity"
+            android:label="Favorite"
+            android:screenOrientation="portrait">
+        </activity>
 
         <activity android:name=".activity.CreateRecipeActivity"
                   android:label="Create Recipe"

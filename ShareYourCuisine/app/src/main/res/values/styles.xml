@@ -31,4 +31,10 @@
         <item name="android:textColor">@color/colorRed</item>
     </style>
 
+    <style name="PostItemBtn">
+        <item name="android:background">@android:color/transparent</item>
+        <item name="android:textColor">@color/colorRed</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:paddingRight">50dp</item>
+    </style>
 </resources>

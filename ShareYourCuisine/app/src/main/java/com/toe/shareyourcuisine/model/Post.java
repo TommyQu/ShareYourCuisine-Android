@@ -18,7 +18,6 @@ public class Post {
     private String createdUserName;
     private String createdUserAvatarUrl;
     private Long createdAt;
-    private int totalLikes;
     private ArrayList<String> likedBy;
 
     public Post() {
@@ -81,13 +80,6 @@ public class Post {
         this.createdAt = createdAt;
     }
 
-    public int getTotalLikes() {
-        return totalLikes;
-    }
-
-    public void setTotalLikes(int totalLikes) {
-        this.totalLikes = totalLikes;
-    }
 
     public ArrayList<String> getLikedBy() {
         return likedBy;

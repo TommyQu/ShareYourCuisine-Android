@@ -12,6 +12,7 @@
     <color name="dividerGrey">#EEEEEE</color>
     <color name="textGrey">#9E9E9E</color>
     <color name="borderGrey">#E0E0E0</color>
+    <color name="defaultGrey">#fffafafa</color>
 
     <color name="grey_500">#9E9E9E</color>
     <color name="grey_200">#EEEEEE</color>

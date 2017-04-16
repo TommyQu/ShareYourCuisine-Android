@@ -36,8 +36,11 @@ public class PostService {
     private FirebaseStorage mFirebaseStorage;
     private StorageReference mStorageRef;
     private StorageReference mImgStorageRef;
+    private FirebaseDatabase mFirebaseDatabase;
+    private DatabaseReference mPostRef;
     private CreatePostListener mCreatePostListener;
     private GetAllPostsListener mGetAllPostsListener;
+    private LikeOnePostListener mLikeOnePostListener;
     private Context mContext;
     private Post mPostToCreate;
 
@@ -51,8 +54,15 @@ public class PostService {
         public void getAllPostsFail(String errorMsg);
     }
 
+    public interface LikeOnePostListener {
+        public void likeOnePostSucceed();
+        public void likeOnePostFail(String errorMsg);
+    }
+
     public PostService(Context context) {
         mContext = context;
+        mFirebaseDatabase = FirebaseDatabase.getInstance();
+        mPostRef = mFirebaseDatabase.getReference("post");
     }
 
     public void setCreatePostListener(CreatePostListener createPostListener) {
@@ -61,6 +71,10 @@ public class PostService {
 
     public void setGetAllPostsListener(GetAllPostsListener getAllPostsListener) {
         mGetAllPostsListener = getAllPostsListener;
+    }
+
+    public void setLikeOnePostListener(LikeOnePostListener likeOnePostListener) {
+        mLikeOnePostListener = likeOnePostListener;
     }
 
     public void createPost(Post post) {
@@ -95,9 +109,7 @@ public class PostService {
     }
 
     public void insertPostData() {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference postRef = firebaseDatabase.getReference("post");
-        postRef.push().setValue(mPostToCreate, new DatabaseReference.CompletionListener() {
+        mPostRef.push().setValue(mPostToCreate, new DatabaseReference.CompletionListener() {
             @Override
             public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
                 if(databaseError != null)
@@ -109,9 +121,7 @@ public class PostService {
     }
 
     public void getAllPosts() {
-        FirebaseDatabase firebaseDatabase = FirebaseDatabase.getInstance();
-        DatabaseReference postRef = firebaseDatabase.getReference("post");
-        postRef.orderByChild("createdAt").addListenerForSingleValueEvent(new ValueEventListener() {
+        mPostRef.orderByChild("createdAt").addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(DataSnapshot dataSnapshot) {
                 List<Post> posts = new ArrayList<Post>();
@@ -127,6 +137,34 @@ public class PostService {
             @Override
             public void onCancelled(DatabaseError databaseError) {
                 mGetAllPostsListener.getAllPostsFail(databaseError.getMessage());
+            }
+        });
+
+    }
+
+    public void likeOnePost(final String postId, final String userId) {
+        mPostRef.child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Post post = dataSnapshot.getValue(Post.class);
+                if(!post.getLikedBy().contains(userId)) {
+                    post.getLikedBy().add(userId);
+                    mPostRef.child(postId).child("likedBy").setValue(post.getLikedBy(), new DatabaseReference.CompletionListener() {
+                        @Override
+                        public void onComplete(DatabaseError databaseError, DatabaseReference databaseReference) {
+                            if(databaseError != null)
+                                mLikeOnePostListener.likeOnePostFail(databaseError.getMessage());
+                            else
+                                mLikeOnePostListener.likeOnePostSucceed();
+                        }
+                    });
+                } else
+                    mLikeOnePostListener.likeOnePostFail("You have already liked this post!");
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mLikeOnePostListener.likeOnePostFail(databaseError.getMessage());
             }
         });
 

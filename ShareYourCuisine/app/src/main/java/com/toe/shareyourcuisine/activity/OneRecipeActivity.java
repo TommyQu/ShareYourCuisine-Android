@@ -65,6 +65,7 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
     private Recipe mRecipe;
     private RecipeService mRecipeService;
     private String mFavoriteId;
+    private boolean mIsRated;
 
     private static final String TAG = "ToeOneRecipeActivity:";
     @Override
@@ -74,6 +75,7 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
         setContentView(R.layout.activity_one_recipe);
         mRecipe = Parcels.unwrap(getIntent().getParcelableExtra("recipe"));
         mRecipeService = new RecipeService(OneRecipeActivity.this);
+        mIsRated = false;
 
         mDisplayImgIV = (ImageView)findViewById(R.id.display_img_iv);
         mCreatedUserAvatarIV = (CircleImageView) findViewById(R.id.created_user_avatar_iv);
@@ -127,34 +129,35 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
         mRateBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(mAuth.getCurrentUser() != null) {
-                    RatingDialog ratingDialog = new RatingDialog.Builder(OneRecipeActivity.this)
+                if(mIsRated == true) {
+                    Toast.makeText(OneRecipeActivity.this, "You have already rated this recipe", Toast.LENGTH_SHORT).show();
+                } else {
+                    if(mAuth.getCurrentUser() != null) {
+                        RatingDialog ratingDialog = new RatingDialog.Builder(OneRecipeActivity.this)
 //                            .icon(drawable)
-                            .threshold(3)
-                            .title("How do you like this?")
-                            .titleTextColor(R.color.textGrey)
-                            .positiveButtonText("Confirm")
-                            .negativeButtonText("Cancel")
-                            .positiveButtonTextColor(R.color.colorRed)
-                            .negativeButtonTextColor(R.color.colorRed)
-                            .ratingBarColor(R.color.golden_stars)
-                            .onRatingSubmit(new RatingDialog.RatingSubmitListener() {
-                                @Override
-                                public void onRatingSubmit(float rating, boolean thresholdCleared) {
-                                    if(mRecipe.getRatedBy().contains(mAuth.getCurrentUser().getUid()))
-                                        Toast.makeText(OneRecipeActivity.this, "You have already rated this recipe", Toast.LENGTH_LONG).show();
-                                    else {
+                                .threshold(3)
+                                .title("How do you like this?")
+                                .titleTextColor(R.color.textGrey)
+                                .positiveButtonText("Confirm")
+                                .negativeButtonText("Cancel")
+                                .positiveButtonTextColor(R.color.colorRed)
+                                .negativeButtonTextColor(R.color.colorRed)
+                                .ratingBarColor(R.color.golden_stars)
+                                .onRatingSubmit(new RatingDialog.RatingSubmitListener() {
+                                    @Override
+                                    public void onRatingSubmit(float rating, boolean thresholdCleared) {
                                         mRecipe.getRatedBy().add(mAuth.getCurrentUser().getUid());
                                         mRecipeService.setRateRecipeListener(OneRecipeActivity.this);
                                         mRecipeService.rateRecipe(mRecipe.getUid(), mAuth.getCurrentUser().getUid(), rating);
                                     }
-                                }
-                            }).build();
+                                }).build();
 
-                    ratingDialog.show();
-                } else {
-                    Toast.makeText(OneRecipeActivity.this, "Please log in!", Toast.LENGTH_SHORT).show();
+                        ratingDialog.show();
+                    } else {
+                        Toast.makeText(OneRecipeActivity.this, "Please log in!", Toast.LENGTH_SHORT).show();
+                    }
                 }
+
             }
         });
 
@@ -217,7 +220,18 @@ public class OneRecipeActivity extends BaseActivity implements RecipeService.Rat
 
         FavoriteService favoriteService = new FavoriteService();
         favoriteService.setGetFavoritesByUserIdListener(OneRecipeActivity.this);
-        favoriteService.getFavoritesByUserId(mAuth.getCurrentUser().getUid());
+
+//        Check whether the user has favorited or rated this recipe
+        if(mAuth.getCurrentUser() != null) {
+            favoriteService.getFavoritesByUserId(mAuth.getCurrentUser().getUid());
+            if(mRecipe.getRatedBy().contains(mAuth.getCurrentUser().getUid())) {
+                mIsRated = true;
+                mRateBtn.setCompoundDrawablesWithIntrinsicBounds(R.drawable.ic_bottom_starred, 0,0,0);
+                mRateBtn.setText("Rated");
+            } else {
+                mIsRated = false;
+            }
+        }
     }
 
     @Override

@@ -27,7 +27,7 @@ import java.util.List;
  * Created by HQu on 12/27/2016.
  */
 
-public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, PostService.GetAllPostsListener {
+public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefreshListener, PostService.GetAllPostsListener, PostService.LikeOnePostListener, PostRecyclerViewAdapter.PostLikeClickListener {
 
     private static final String TAG = "ToePostFragment:";
     private RecyclerView mPostRV;
@@ -77,15 +77,16 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     @Override
     public void getAllPostsSucceed(List<Post> posts) {
         mAdapter = new PostRecyclerViewAdapter(getActivity(), posts);
-        mAdapter.setPostClickListener(new PostRecyclerViewAdapter.PostClickListener() {
-            @Override
-            public void onItemClick(int position, View v) {
+        mAdapter.setPostLikeClickListener(PostFragment.this);
+//        mAdapter.setPostClickListener(new PostRecyclerViewAdapter.PostClickListener() {
+//            @Override
+//            public void onItemClick(int position, View v) {
 //                Intent intent = new Intent(getActivity(), OneRecipeActivity.class);
 //                Parcelable wrapped = Parcels.wrap(recipes.get(position));
 //                intent.putExtra("recipe", wrapped);
 //                startActivity(intent);
-            }
-        });
+//            }
+//        });
         mPostRV.setAdapter(mAdapter);
         mPostSRL.setRefreshing(false);
     }
@@ -95,4 +96,23 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mPostSRL.setRefreshing(false);
         Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_SHORT).show();
     }
+
+    @Override
+    public void onLikeBtnClick(String postId) {
+        MainActivity mainActivity = (MainActivity) getActivity();
+        PostService postService = new PostService(getActivity());
+        postService.setLikeOnePostListener(PostFragment.this);
+        postService.likeOnePost(postId, mainActivity.getAuth().getCurrentUser().getUid());
+    }
+
+    @Override
+    public void likeOnePostSucceed() {
+        Toast.makeText(getActivity(), "Like succeed", Toast.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void likeOnePostFail(String errorMsg) {
+        Toast.makeText(getActivity(), errorMsg, Toast.LENGTH_LONG).show();
+    }
+
 }
