@@ -42,7 +42,8 @@
         android:id="@+id/createdAt_tv"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignRight="@id/img_iv"
+        android:layout_alignParentRight="true"
+        android:layout_marginRight="20dp"
         android:layout_below="@id/img_iv"
         android:layout_marginTop="@dimen/activity_vertical_margin"
         android:textColor="@color/textGrey"/>
@@ -61,7 +62,6 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:drawableLeft="@drawable/ic_bottom_favorited"
-            android:text="aaa"
             style="@style/PostItemBtn"
             android:layout_weight="1"/>
 

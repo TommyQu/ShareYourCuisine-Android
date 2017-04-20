@@ -99,6 +99,7 @@ public class PostRecyclerViewAdapter extends RecyclerView.Adapter<PostRecyclerVi
         holder.mContentTV.setText(mPosts.get(position).getContent());
         Picasso.with(mContext).load(mPosts.get(position).getCreatedUserAvatarUrl()).fit().centerCrop().into(holder.mAvatarIV);
         holder.mCreatedAtTV.setText(SYCUtils.convertMillisecondsToDateTime(mPosts.get(position).getCreatedAt()));
+        holder.mLikeBtn.setText(String.valueOf(mPosts.get(position).getLikedBy().size()));
         holder.mLikeBtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

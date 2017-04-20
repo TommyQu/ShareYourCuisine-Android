@@ -9,6 +9,7 @@ import android.support.v4.content.ContextCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +21,8 @@ import com.toe.shareyourcuisine.activity.MainActivity;
 import com.toe.shareyourcuisine.adapter.PostRecyclerViewAdapter;
 import com.toe.shareyourcuisine.model.Post;
 import com.toe.shareyourcuisine.service.PostService;
+
+import org.json.JSONStringer;
 
 import java.util.List;
 
@@ -75,18 +78,18 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
     }
 
     @Override
-    public void getAllPostsSucceed(List<Post> posts) {
+    public void getAllPostsSucceed(final List<Post> posts) {
         mAdapter = new PostRecyclerViewAdapter(getActivity(), posts);
         mAdapter.setPostLikeClickListener(PostFragment.this);
-//        mAdapter.setPostClickListener(new PostRecyclerViewAdapter.PostClickListener() {
-//            @Override
-//            public void onItemClick(int position, View v) {
+        mAdapter.setPostClickListener(new PostRecyclerViewAdapter.PostClickListener() {
+            @Override
+            public void onItemClick(int position, View v) {
 //                Intent intent = new Intent(getActivity(), OneRecipeActivity.class);
 //                Parcelable wrapped = Parcels.wrap(recipes.get(position));
 //                intent.putExtra("recipe", wrapped);
 //                startActivity(intent);
-//            }
-//        });
+            }
+        });
         mPostRV.setAdapter(mAdapter);
         mPostSRL.setRefreshing(false);
     }
