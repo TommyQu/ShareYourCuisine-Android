@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+android:orientation="vertical"
+android:layout_width="match_parent"
+android:layout_height="match_parent">
+
+<de.hdodenhof.circleimageview.CircleImageView
+    android:id="@+id/avatar_iv"
+    android:layout_width="40dp"
+    android:layout_height="40dp"/>
+
+<TextView
+    android:id="@+id/name_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_toRightOf="@id/avatar_iv"
+    android:layout_marginTop="5dp"
+    android:layout_marginLeft="20dp"
+    android:layout_marginBottom="3dp"
+    android:textColor="@color/deepBlue"/>
+
+<TextView
+    android:id="@+id/content_tv"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/name_tv"
+    android:layout_toRightOf="@id/avatar_iv"
+    android:layout_marginLeft="20dp"/>
+
+<ImageView
+    android:id="@+id/img_iv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/content_tv"
+    android:layout_toRightOf="@id/avatar_iv"
+    android:layout_marginLeft="20dp"
+    android:layout_marginTop="10dp"/>
+
+<TextView
+    android:id="@+id/createdAt_tv"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_alignParentRight="true"
+    android:layout_marginRight="20dp"
+    android:layout_below="@id/img_iv"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:textColor="@color/textGrey"/>
+
+<LinearLayout
+    android:id="@+id/sub_content_ll"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_below="@id/createdAt_tv"
+    android:layout_toRightOf="@id/avatar_iv"
+    android:layout_marginTop="10dp"
+    android:layout_marginLeft="20dp">
+
+    <Button
+        android:id="@+id/like_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_bottom_favorited"
+        style="@style/PostItemBtn"
+        android:layout_weight="1"/>
+
+    <Button
+        android:id="@+id/comment_btn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableLeft="@drawable/ic_bottom_comment"
+        android:text="aaa"
+        style="@style/PostItemBtn"
+        android:layout_weight="1"/>
+
+</LinearLayout>
+
+<View
+    android:id="@+id/divider"
+    android:layout_below="@id/sub_content_ll"
+    android:layout_width="match_parent"
+    android:layout_marginTop="@dimen/activity_vertical_margin"
+    android:layout_height="1dp"
+    android:background="@color/dividerGrey" />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/comment_rv"
+        android:scrollbars="none"
+        android:layout_below="@id/divider"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"/>
+</RelativeLayout>

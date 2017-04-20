@@ -40,6 +40,7 @@ public class PostService {
     private DatabaseReference mPostRef;
     private CreatePostListener mCreatePostListener;
     private GetAllPostsListener mGetAllPostsListener;
+    private GetPostByIdListener mGetPostByIdListener;
     private LikeOnePostListener mLikeOnePostListener;
     private Context mContext;
     private Post mPostToCreate;
@@ -52,6 +53,11 @@ public class PostService {
     public interface GetAllPostsListener {
         public void getAllPostsSucceed(List<Post> posts);
         public void getAllPostsFail(String errorMsg);
+    }
+
+    public interface GetPostByIdListener {
+        public void getPostByIdSucceed(Post post);
+        public void getPostByIdFail(String errorMsg);
     }
 
     public interface LikeOnePostListener {
@@ -71,6 +77,10 @@ public class PostService {
 
     public void setGetAllPostsListener(GetAllPostsListener getAllPostsListener) {
         mGetAllPostsListener = getAllPostsListener;
+    }
+
+    public void setGetPostByIdListener(GetPostByIdListener getPostByIdListener) {
+        mGetPostByIdListener = getPostByIdListener;
     }
 
     public void setLikeOnePostListener(LikeOnePostListener likeOnePostListener) {
@@ -140,6 +150,22 @@ public class PostService {
             }
         });
 
+    }
+
+    public void getPostById(String uid) {
+        final DatabaseReference postRef = mFirebaseDatabase.getReference("post");
+        postRef.child(uid).addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(DataSnapshot dataSnapshot) {
+                Post post = dataSnapshot.getValue(Post.class);
+                mGetPostByIdListener.getPostByIdSucceed(post);
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+                mGetPostByIdListener.getPostByIdFail(databaseError.getMessage());
+            }
+        });
     }
 
     public void likeOnePost(final String postId, final String userId) {

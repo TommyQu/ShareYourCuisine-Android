@@ -84,10 +84,9 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mAdapter.setPostClickListener(new PostRecyclerViewAdapter.PostClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-//                Intent intent = new Intent(getActivity(), OneRecipeActivity.class);
-//                Parcelable wrapped = Parcels.wrap(recipes.get(position));
-//                intent.putExtra("recipe", wrapped);
-//                startActivity(intent);
+                Intent intent = new Intent(getActivity(), PostFragment.class);
+                intent.putExtra("postId", posts.get(position).getUid());
+                startActivity(intent);
             }
         });
         mPostRV.setAdapter(mAdapter);
