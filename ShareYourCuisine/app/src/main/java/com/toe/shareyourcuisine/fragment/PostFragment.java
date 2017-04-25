@@ -18,6 +18,7 @@ import android.widget.Toast;
 import com.toe.shareyourcuisine.R;
 import com.toe.shareyourcuisine.activity.CreatePostActivity;
 import com.toe.shareyourcuisine.activity.MainActivity;
+import com.toe.shareyourcuisine.activity.OnePostActivity;
 import com.toe.shareyourcuisine.adapter.PostRecyclerViewAdapter;
 import com.toe.shareyourcuisine.model.Post;
 import com.toe.shareyourcuisine.service.PostService;
@@ -84,7 +85,7 @@ public class PostFragment extends Fragment implements SwipeRefreshLayout.OnRefre
         mAdapter.setPostClickListener(new PostRecyclerViewAdapter.PostClickListener() {
             @Override
             public void onItemClick(int position, View v) {
-                Intent intent = new Intent(getActivity(), PostFragment.class);
+                Intent intent = new Intent(getActivity(), OnePostActivity.class);
                 intent.putExtra("postId", posts.get(position).getUid());
                 startActivity(intent);
             }

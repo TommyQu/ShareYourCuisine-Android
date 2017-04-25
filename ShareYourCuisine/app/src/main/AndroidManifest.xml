@@ -61,6 +61,10 @@
                   android:label="One Recipe"
                   android:screenOrientation="portrait">
         </activity>
+        <activity android:name=".activity.OnePostActivity"
+            android:label="One Post"
+            android:screenOrientation="portrait">
+        </activity>
         <activity android:name=".activity.RecipeResultActivity"
                   android:label="RecipeResult"
                   android:screenOrientation="portrait">
